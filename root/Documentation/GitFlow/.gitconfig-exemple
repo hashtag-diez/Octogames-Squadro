@@ -1,0 +1,21 @@
+[merge]
+      tool = kdiff3
+[mergetool "kdiff3"]
+      path = C:/Program Files/KDiff3/kdiff3.exe
+[diff]
+      guitool = kdiff3
+[difftool "kdiff3"]
+      path = C:/Program Files/KDiff3/kdiff3.exe
+[core]
+      editor = \"C:/Program Files (x86)/GitExtensions/GitExtensions.exe\" fileeditor
+      excludesfile = C:/Users/dromain/.gitignore
+[user]
+      name = username
+	email =adresse_mail@gmail.com
+ [difftool "sourcetree"]
+      cmd = 'C:/Program Files (x86)/KDiff3/kdiff3.exe' \"$LOCAL\" \"$REMOTE\"
+ [mergetool "sourcetree"]
+      cmd = 'C:/Program Files (x86)/KDiff3/kdiff3.exe' \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
+      trustExitCode = true
+ [http]
+      sslVerify = false
