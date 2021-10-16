@@ -15,7 +15,7 @@ jobs:
     - run: npm ci
       working-directory: ./root
     - run: npm test
-      working-directory: ./root
+      working-directory: ./root/client
     - run: npm run build
       working-directory: ./root
     - name: Publishing the Front
