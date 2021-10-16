@@ -1,11 +1,20 @@
+<<<<<<< HEAD
 import logo from './logo.svg'
 import './App.css'
+=======
+import './App.css';
+>>>>>>> e8cceed (Pass the build)
 
 function App () {
   return (
+<<<<<<< HEAD
     <div className='App'>
       <header className='App-header'>
         <img src={logo} className='App-logo' alt='logo' />
+=======
+    <div className="App">
+      <header className="App-header">
+>>>>>>> e8cceed (Pass the build)
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
