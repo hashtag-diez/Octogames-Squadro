@@ -1,4 +1,4 @@
-name: Easy Integration for Node.js
+name: Integration for Node.js
 on:
   push:
     branches: [ develop ]
@@ -15,6 +15,7 @@ jobs:
       with:
         node-version: 14
         cache: 'npm'
+      working-directory: ./root
     - run: npm ci
       working-directory: ./root
     - run: npm test
