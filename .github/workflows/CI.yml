@@ -17,5 +17,5 @@ jobs:
     - run: npm ci
       working-directory: ./root
     - run: npm run build
-      working-directory: ./root
+      working-directory: ./root/client
     
