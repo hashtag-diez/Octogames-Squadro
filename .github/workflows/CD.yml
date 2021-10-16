@@ -12,9 +12,6 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: 14
-        cache: 'npm'
-        cache-dependency-path: root/package-lock.json
-      working-directory: ./root
     - run: npm ci
       working-directory: ./root
     - run: npm test

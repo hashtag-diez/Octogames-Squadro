@@ -14,8 +14,6 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: 14
-        cache: 'npm'
-      working-directory: ./root
     - run: npm ci
       working-directory: ./root
     - run: npm test
