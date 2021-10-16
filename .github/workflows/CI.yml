@@ -15,8 +15,10 @@ jobs:
       with:
         node-version: 14
         cache: 'npm'
-        cache-dependency-path: root/package-lock.json
     - run: npm ci
+    working-directory: ./root
     - run: npm test
+    working-directory: ./root
     - run: npm run build
+    working-directory: ./root
     
