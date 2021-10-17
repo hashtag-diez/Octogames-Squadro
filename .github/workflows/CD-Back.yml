@@ -1,0 +1,22 @@
+name: Publish Front-end and Back-end on Netlify and Heroku
+on: 
+  push:
+    branches: [ main ]
+defaults:
+  run:
+    working-directory: ./root/server
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@uv2
+    - uses: actions/setup-node@v2
+      with:
+        ode-version: 14
+    - name: Publishing the Back
+          uses: akhileshns/heroku-deploy@v3.12.12 
+          with:
+            heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+            heroku_app_name: "octogames-spargo" 
+            heroku_email: "zeidfazazi@gmail.com"
