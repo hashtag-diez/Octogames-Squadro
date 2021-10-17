@@ -2,5 +2,5 @@
 # unless otherwise overridden by more specific contexts.
 [build]
   base = "root/client/"
-  publish = "root/client/build"
+  publish = "root/client/"
   command = "echo 'default context'"
