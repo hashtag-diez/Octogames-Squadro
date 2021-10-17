@@ -4,3 +4,8 @@
   base = "root/client/"
   publish = "/"
   command = "echo 'default context'"
+
+[[redirects]]
+  from = "/*"
+  to = "/public/index.html"
+  status = 200
