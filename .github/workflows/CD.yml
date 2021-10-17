@@ -1,7 +1,7 @@
 name: Publish Front-end and Back-end on Netlify and Heroku
 on: 
   pull_request:
-    branches: [ feat/2-creer-environnements-dev-1 ]
+    branches: [ develop ]
 defaults:
   run:
     working-directory: ./root/client
