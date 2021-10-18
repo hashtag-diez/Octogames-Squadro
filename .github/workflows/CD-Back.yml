@@ -19,8 +19,4 @@ jobs:
           with:
             heroku_api_key: ${{secrets.HEROKU_API_KEY}}
             heroku_app_name: "octogames-spargo" 
-<<<<<<< HEAD
             heroku_email: "zeidfazazi@gmail.com"
-=======
-            heroku_email: "zeidfazazi@gmail.com"
->>>>>>> 6470783 (Add basic files for server and the server's CD workflow)
