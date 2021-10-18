@@ -1,4 +1,4 @@
-name: Publish Front-end and Back-end on Netlify and Heroku
+name: Publish Front-end on Netlify
 on: 
   push:
     branches: [ main ]
