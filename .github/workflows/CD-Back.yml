@@ -1,4 +1,4 @@
-name: Publish Front-end on Heroku
+name: Publish Back-end on Heroku
 on: 
   push:
     branches: [ main ]
