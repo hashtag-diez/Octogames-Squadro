@@ -1,0 +1,40 @@
+#redpiece {
+  animation: 5s ease-in-out redMovement forwards;
+  animation-delay: calc(var(--order)*200ms); 
+}
+
+@keyframes redMovement{
+  0% {
+    transform: translateX(0px);
+
+  }
+  50%{
+    transform: translateX(calc(6*94px)) rotate(0deg);
+  }
+  60%{
+    transform: translateX(calc(6*94px)) rotate(180deg);
+  }
+  100%{
+    transform: translateX(0px) rotate(180deg);
+  }
+}
+#yellowpiece {
+  animation: 4s ease-in-out yellowMovement forwards;
+  animation-delay: 1.7s; 
+}
+
+@keyframes yellowMovement{
+  0% {
+    transform: translateY(0px);
+
+  }
+  50%{
+    transform: translateY(calc(6*94px)) rotate(0deg);
+  }
+  75%{
+    transform: translateY(calc(6*94px)) rotate(180deg);
+  }
+  100%{
+    transform: translateY(0px) rotate(180deg);
+  }
+}

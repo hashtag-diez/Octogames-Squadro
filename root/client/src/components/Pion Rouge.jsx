@@ -1,10 +1,11 @@
 import React from 'react'
 import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
-
-const PionRouge = () => {
+import '../style/Pion.css'
+const PionRouge = (order) => {
+  const style = { '--order': order }
   return (
     <>
-      <Red />
+      <Red id='redpiece' style={style} />
     </>
   )
 }
