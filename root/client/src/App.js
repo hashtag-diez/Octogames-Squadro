@@ -1,10 +1,14 @@
 import './style/App.css'
+<<<<<<< HEAD
 import {BrowserRouter as Router,Routes,Route} from "react-router-dom";
 import Home from "./pages/Home"
 import AboutUs from "./pages/AboutUs"
 import BotGame from './pages/BotGame'
 import LocalGame from './pages/LocalGame'
 
+=======
+import Plateau from './components/Plateau'
+>>>>>>> 27f10b3 (Add files/codes to implement a brainless static version of the board)
 function App () {
     //let history=useNavigate();
 
