@@ -9,11 +9,11 @@ export const Plateau = () => {
     <div className='board-wrapper'>
       <Board />
       <div className='red-row'>
-        <PionRouge />
-        <PionRouge />
-        <PionRouge />
-        <PionRouge />
-        <PionRouge />
+        <PionRouge order={1} />
+        <PionRouge order={2} />
+        <PionRouge order={3} />
+        <PionRouge order={4} />
+        <PionRouge order={5} />
       </div>
       <div className='yellow-row'>
         <PionJaune />

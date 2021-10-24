@@ -14,6 +14,7 @@
   z-index: -1;
 }
 .yellow-row{
+  margin-top: 5px;
   margin-left: 32px;
   display: flex;
   flex-direction: row;
@@ -30,3 +31,4 @@
   width: 94px;
   height: calc(100%-188px);
 }
+
