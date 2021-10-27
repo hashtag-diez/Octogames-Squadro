@@ -10,10 +10,13 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay }) => {
     if (currPower !== 0) {
       const newPosX = handlePlay(posX, y, currPower)
       if (newPosX === 0) setCurrPower(0)
-      if (newPosX === 6) setCurrPower(powerReturn)
+      if (newPosX === 6) {
+        console.log('%cLimite atteinte, changement de sens', 'font-weight: bold')
+        setCurrPower(powerReturn)
+      }
       setPosX(newPosX)
     } else {
-      console.log('Pion inactif !')
+      console.log('%cPion inactif...', 'font-style: italic')
     }
   }
   return (
