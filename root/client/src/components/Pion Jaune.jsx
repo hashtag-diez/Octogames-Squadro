@@ -4,6 +4,7 @@ import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 import { ReactComponent as NormalHover } from '../assets/Hover Normal Jaune.svg'
 import { ReactComponent as HitHover } from '../assets/Hover Hit Jaune.svg'
 
+<<<<<<< HEAD
 const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
@@ -74,6 +75,27 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
       </StyledDivReversed>
     )
   }
+=======
+const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay }) => {
+  const [posX, setPosX] = useState(x)
+  const [currPower, setCurrPower] = useState(powerGo)
+  const handleMovement = (e) => {
+    e.preventDefault()
+    if (currPower !== 0) {
+      const newPosX = handlePlay(posX, y, currPower)
+      if (newPosX === 0) setCurrPower(0)
+      if (newPosX === 6) setCurrPower(powerReturn)
+      setPosX(newPosX)
+    } else {
+      console.log('Pion inactif !')
+    }
+  }
+  return (
+    <>
+      <Yellow id='yellowpiece' onClick={(e) => handleMovement(e)} />
+    </>
+  )
+>>>>>>> b1a6ac8 (Add code to implement back-and-forth movement and score incrementation)
 }
 const spawn = (direction) =>
     keyframes`
