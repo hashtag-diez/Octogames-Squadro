@@ -30,6 +30,7 @@ export const Plateau = () => {
     if (i === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
+      console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
       return 0
     }
@@ -37,7 +38,8 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     currBoard[x][y + distance] = 'r'
     setBoard(currBoard)
-    console.log(board)
+    // console.log(board)
+    console.log('%cPion Rouge n°' + x + ' a bougé de ' + y + ' à ' + i, 'color: #E02016')
     return y + distance
   }
   const handleYellowPlay = (x, y, power) => {
@@ -54,6 +56,7 @@ export const Plateau = () => {
     if (i === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
+      console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
       return 0
     }
@@ -61,7 +64,8 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     currBoard[x + distance][y] = 'y'
     setBoard(currBoard)
-    console.log(board)
+    // console.log(board)
+    console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + i, 'color: #DAA25D')
     return x + distance
   }
   return (
