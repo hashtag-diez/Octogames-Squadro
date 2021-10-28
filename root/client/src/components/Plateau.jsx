@@ -20,13 +20,21 @@ export const Plateau = () => {
     const currBoard = [...board]
     let distance = power
     let i
+    /*
+      Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
+      Le sens de parcours de la ligne dépend de la valeur de power, si on est en aller ou en retour
+      Les operateurs conditionnels dans la boucle for permet de fixer ce sens de parcours
+      Permet de réduire le code et la répétition des boucles
+    */
     for (i = y; (power > 0 ? i < y + distance : i > y + distance) ; (power > 0 ? i++ : i--)) {
+      // Si un pion Jaune est rencontré, retour à la case départ et incrémentation de la distance
       if (currBoard[x][i] === 'y') {
         distance += 1
         currBoard[x][i] = '+'
         currBoard[0][i] = 'y'
       }
     }
+    // Si un aller-retour complet réalisé, incrémentation du score
     if (i === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
@@ -34,25 +42,34 @@ export const Plateau = () => {
       setScore(newScore)
       return 0
     }
+    // Si le pion a quitté une bordure de sa ligne/colonne
     if (y === 0 || y === 6) currBoard[x][y] = '—'
     else currBoard[x][y] = '+'
     currBoard[x][y + distance] = 'r'
     setBoard(currBoard)
     // console.log(board)
-    console.log('%cPion Rouge n°' + x + ' a bougé de ' + y + ' à ' + i, 'color: #E02016')
+    console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + i, 'color: #E02016')
     return y + distance
   }
   const handleYellowPlay = (x, y, power) => {
     const currBoard = [...board]
     let distance = power
     let i
+    /*
+      Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
+      Le sens de parcours de la ligne/colonne dépend de la valeur de power, si on est en aller ou en retour
+      Les operateurs conditionnels dans la boucle for permet de fixer ce sens de parcours
+      Permet de réduire le code et la répétition des boucles
+    */
     for (i = x; (power > 0 ? i < x + distance : i > x + distance); (power > 0 ? i++ : i--)) {
+      // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
       if (currBoard[i][y] === 'r') {
         distance += 1
         currBoard[i][y] = '+'
         currBoard[i][0] = 'r'
       }
     }
+    // Si un aller-retour complet réalisé, incrémentation du score
     if (i === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
@@ -60,6 +77,7 @@ export const Plateau = () => {
       setScore(newScore)
       return 0
     }
+    // Si le pion a quitté une bordure de sa ligne/colonne
     if (x === 0 || x === 6) currBoard[x][y] = '|'
     else currBoard[x][y] = '+'
     currBoard[x + distance][y] = 'y'
