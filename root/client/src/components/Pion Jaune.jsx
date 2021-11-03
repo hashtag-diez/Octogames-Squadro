@@ -73,7 +73,7 @@ const rotate = keyframes`
 `
 const StyledDiv = styled.div`
   animation: ${({ animateSlide, curr, step }) => (animateSlide === 'true' ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
-  ${({ animateRotate }) => (animateRotate === 'true' ? rotate : '')} 0.3s ease-in-out forwards,
+  ${({ animateSlide, animateRotate }) => (animateRotate === 'true' && animateSlide === 'false' ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate === 'true' && animateSlide === 'true' ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 export default PionJaune
