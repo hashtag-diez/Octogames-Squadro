@@ -15,6 +15,25 @@ export const Plateau = () => {
       ['x', '|', '|', '|', '|', '|', 'x']
     ]
   )
+  const [yellows, setYellows] = useState(
+    [
+      { x: 0, y: 1, powerGo: 1, powerReturn: -3 },
+      { x: 0, y: 2, powerGo: 3, powerReturn: -1 },
+      { x: 0, y: 3, powerGo: 2, powerReturn: -2 },
+      { x: 0, y: 4, powerGo: 3, powerReturn: -1 },
+      { x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+    ]
+  )
+  const [reds, setReds] = useState(
+    [
+      { x: 1, y: 0, powerGo: 3, powerReturn: -1 },
+      { x: 2, y: 0, powerGo: 1, powerReturn: -3 },
+      { x: 3, y: 0, powerGo: 2, powerReturn: -2 },
+      { x: 4, y: 0, powerGo: 1, powerReturn: -3 },
+      { x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+    ]
+  )
+
   const [score, setScore] = useState([0, 0])
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -57,7 +76,7 @@ export const Plateau = () => {
     let i
     /*
       Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
-      Le sens de parcours de la ligne/colonne dépend de la valeur de power, si on est en aller ou en retour
+      Le sens de parcours de la ligne/colonne dépend de la valeur de power, si on est en al`ler ou en retour
       Les operateurs conditionnels dans la boucle for permet de fixer ce sens de parcours
       Permet de réduire le code et la répétition des boucles
     */
@@ -96,18 +115,32 @@ export const Plateau = () => {
       <div className='board-wrapper'>
         <Board />
         <div className='red-row'>
-          <PionRouge x={1} y={0} powerGo={3} powerReturn={-1} handlePlay={handleRedPlay} />
-          <PionRouge x={2} y={0} powerGo={1} powerReturn={-3} handlePlay={handleRedPlay} />
-          <PionRouge x={3} y={0} powerGo={2} powerReturn={-2} handlePlay={handleRedPlay} />
-          <PionRouge x={4} y={0} powerGo={1} powerReturn={-3} handlePlay={handleRedPlay} />
-          <PionRouge x={5} y={0} powerGo={3} powerReturn={-1} handlePlay={handleRedPlay} />
+          {
+            reds.map(red => (
+              <PionRouge
+                key={red.x}
+                x={red.x}
+                y={red.y}
+                powerGo={red.powerGo}
+                powerReturn={red.powerReturn}
+                handlePlay={handleRedPlay}
+              />
+            ))
+          }
         </div>
         <div className='yellow-row'>
-          <PionJaune x={0} y={1} powerGo={1} powerReturn={-3} handlePlay={handleYellowPlay} />
-          <PionJaune x={0} y={2} powerGo={3} powerReturn={-1} handlePlay={handleYellowPlay} />
-          <PionJaune x={0} y={3} powerGo={2} powerReturn={-2} handlePlay={handleYellowPlay} />
-          <PionJaune x={0} y={4} powerGo={3} powerReturn={-1} handlePlay={handleYellowPlay} />
-          <PionJaune x={0} y={5} powerGo={1} powerReturn={-3} handlePlay={handleYellowPlay} />
+          {
+            yellows.map(yellow => (
+              <PionJaune
+                key={yellow.y}
+                x={yellow.x}
+                y={yellow.y}
+                powerGo={yellow.powerGo}
+                powerReturn={yellow.powerReturn}
+                handlePlay={handleYellowPlay}
+              />
+            ))
+          }
         </div>
       </div>
     </>

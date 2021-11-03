@@ -1,43 +1,51 @@
 import styled, { keyframes } from 'styled-components'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
-import '../style/Pion.css'
 
 const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay }) => {
   const [posX, setPosX] = useState(x)
-  const [animate, setAnimate] = useState('')
+  const [animateSlide, setAnimateSlide] = useState('')
+  const [animateRotate, setAnimateRotate] = useState('')
   const [currPower, setCurrPower] = useState(powerGo)
   const handleMovement = (e) => {
-    setAnimate('false')
     e.preventDefault()
     if (currPower !== 0) {
       const newPosX = handlePlay(posX, y, currPower)
-      if (newPosX === 0) setCurrPower(0)
-      if (newPosX === 6) {
-        console.log('%cLimite atteinte, changement de sens', 'font-weight: bold')
-        setCurrPower(powerReturn)
-      }
       setPosX(newPosX)
     } else {
       console.log('%cPion inactif...', 'font-style: italic')
     }
-    setAnimate('true')
   }
+  useEffect(() => {
+    if (posX !== 0 || animateRotate === 'true') {
+      setAnimateSlide('true')
+      if (posX === 0 && animateRotate === 'true') {
+        const timer = setTimeout(() => {
+          setCurrPower(0)
+        }, 500) // The duration of the animation defined in the CSS file
+        return () => {
+          clearTimeout(timer)
+        }
+      }
+      if (posX === 6) {
+        const timer = setTimeout(() => {
+          setAnimateSlide('false')
+          setAnimateRotate('true')
+          setCurrPower(powerReturn)
+        }, 400) // The duration of the animation defined in the CSS file
+        return () => {
+          clearTimeout(timer)
+        }
+      }
+    }
+  }, [posX])
   return (
-    <StyledDiv animate={animate} curr={posX} step={currPower} onClick={(e) => handleMovement(e)}>
+    <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={currPower} onClick={(e) => handleMovement(e)}>
       <Yellow />
     </StyledDiv>
   )
 }
-const StaticSlide = keyframes`
-  0%{
-    transform: translateY(0px);
-  }
-  100%{
-    transform: translateY(92px);
-  }
-`
-const slide = (a, b) =>
+const slideGo = (a, b) =>
   keyframes`
     0%{
       transform: translateY(${a}px);
@@ -46,19 +54,26 @@ const slide = (a, b) =>
       transform: translateY(${b}px);
     }
 `
-/* const slideWithRotate = (a, b) => {
+const slideReturn = (a, b) =>
   keyframes`
-  0% {
-    transform: translateY(${a}px);
-  }
-  75%{
-    transform: translateY(${b}px) rotate(0deg);
+    0%{
+      transform: translateY(${a}px) rotate(180deg);
+    }
+    100%{
+      transform: translateY(${b}px) rotate(180deg);
+    }
+`
+const rotate = keyframes`
+  0%{
+    transform: translateY(calc(6*94px)) rotate(0deg);
   }
   100%{
-    transform: translateY(${b}px) rotate(180deg);
-  }`
-} */
+    transform: translateY(calc(6*94px)) rotate(180deg);
+  }
+`
 const StyledDiv = styled.div`
-  animation: ${({ animate, curr, step }) => (animate === 'true' ? slide(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+  animation: ${({ animateSlide, curr, step }) => (animateSlide === 'true' ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
+  ${({ animateRotate }) => (animateRotate === 'true' ? rotate : '')} 0.3s ease-in-out forwards,
+  ${({ animateSlide, animateRotate, curr, step }) => (animateRotate === 'true' && animateSlide === 'true' ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 export default PionJaune
