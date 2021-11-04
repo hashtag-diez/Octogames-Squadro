@@ -2,18 +2,22 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay }) => {
+const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState('')
   const [animateRotate, setAnimateRotate] = useState('')
   const [currPower, setCurrPower] = useState(powerGo)
+  const [distance, setDistance] = useState(0)
   const handleMovement = (e) => {
     e.preventDefault()
-    if (currPower !== 0) {
-      const newPosX = handlePlay(posX, y, currPower)
-      setPosX(newPosX)
-    } else {
-      console.log('%cPion inactif...', 'font-style: italic')
+    if (turn === 'y') {
+      if (currPower !== 0) {
+        const newPosX = handlePlay(posX, y, currPower)
+        setDistance(newPosX - posX)
+        setPosX(newPosX)
+      } else {
+        console.log('%cPion inactif...', 'font-style: italic')
+      }
     }
   }
   useEffect(() => {
@@ -40,7 +44,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay }) => {
     }
   }, [posX])
   return (
-    <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={currPower} onClick={(e) => handleMovement(e)}>
+    <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
       <Yellow />
     </StyledDiv>
   )
