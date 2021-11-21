@@ -36,18 +36,22 @@ export const Plateau = () => {
 
   const [score, setScore] = useState([0, 0])
   const [turn, setTurn] = useState('y')
-  const replaceRedPawn = (x) => {
+  const replaceRedPawn = (list) => {
     const newReds = [...reds]
-    const [powerGo, powerReturn] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn]
-    delete newReds[x - 1]
-    newReds[x - 1] = { id: Date.now(), x: x, y: 0, powerGo: powerGo, powerReturn: powerReturn }
+    list.forEach(x => {
+      const [powerGo, powerReturn] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn]
+      delete newReds[x - 1]
+      newReds[x - 1] = { id: Date.now() + x, x: x, y: 0, powerGo: powerGo, powerReturn: powerReturn }
+    })
     setReds(newReds)
   }
-  const replaceYellowPawn = (y) => {
+  const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
-    const [powerGo, powerReturn] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn]
-    delete newYellows[y - 1]
-    newYellows[y - 1] = { id: Date.now(), x: 0, y: y, powerGo: powerGo, powerReturn: powerReturn }
+    list.forEach(y => {
+      const [powerGo, powerReturn] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn]
+      delete newYellows[y - 1]
+      newYellows[y - 1] = { id: Date.now() + y, x: 0, y: y, powerGo: powerGo, powerReturn: powerReturn }
+    })
     setYellows(newYellows)
   }
   const updateYellows = (x, y) => {
@@ -62,7 +66,10 @@ export const Plateau = () => {
   }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
-    let distance = (y + power >= 6 ? 6 - y : power)
+    // Liste contenant les pions éliminés lors du tour
+    const deadPawn = []
+    // On vérifie que le déplacement n'engendre pas un dépassement des limites du plateau
+    let distance = (y + power >= 6 ? 6 - y : (y + power <= 0 ? 0 - y : power))
     let i
     /*
       Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
@@ -74,12 +81,14 @@ export const Plateau = () => {
       // Si un pion Jaune est rencontré, retour à la case départ et incrémentation de la distance
       if (currBoard[x][i] === 'y') {
         distance = (power > 0 ? distance + 1 : distance - 1)
-        replaceYellowPawn(i)
+        deadPawn.push(i)
         currBoard[x][i] = '+'
         currBoard[0][i] = 'y'
       }
     }
-    const res = (power > 0 ? i - 1 : i + 1)
+    // Si dépassement imprévu, on replace le pion aux bordures du plateau
+    const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
+    replaceYellowPawn(deadPawn)
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
@@ -101,7 +110,8 @@ export const Plateau = () => {
   }
   const handleYellowPlay = (x, y, power) => {
     const currBoard = [...board]
-    let distance = (x + power >= 6 ? 6 - x : power)
+    const deadPawn = []
+    let distance = (x + power >= 6 ? 6 - x : (x + power <= 0 ? 0 - x : power))
     let i
     console.log(x + distance)
     /*
@@ -114,12 +124,13 @@ export const Plateau = () => {
       // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
       if (currBoard[i][y] === 'r') {
         distance = (power > 0 ? distance + 1 : distance - 1)
-        replaceRedPawn(i)
+        deadPawn.push(i)
         currBoard[i][y] = '+'
         currBoard[i][0] = 'r'
       }
     }
-    const res = (power > 0 ? i - 1 : i + 1)
+    const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
+    replaceRedPawn(deadPawn)
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
