@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
+import Evaluation from '../js/bot/fonctionEvaluation.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
 export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
@@ -56,11 +57,13 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   const updateYellows = (x, y) => {
     const newYellows = [...yellows]
     newYellows[y - 1].x = x
+    newYellows[y - 1].currentPower = getUpdatePower( y, 'y')
     setYellows(newYellows)
   }
   const updateReds = (x, y) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
+    newReds[x - 1].currentPower = getUpdatePower(x, 'r')
     setReds(newReds)
   }
 
@@ -176,6 +179,11 @@ const setYellowHover=(x,y,currPower)=>{
       return res
     }
   }
+  const getId = (type, id) => {
+    const newId = `${type}${id}`
+    console.log(newId)
+    return newId
+  }
   const handleYellowPlay = (x, y, power) => {
 
     const currBoard = [...board]
@@ -236,7 +244,7 @@ const setYellowHover=(x,y,currPower)=>{
           {
             reds.map(red => (
               <PionRouge
-                key={red.id}
+                key={getId('r', red.x)}
                 x={red.x}
                 y={red.y}
                 powerGo={red.powerGo}
@@ -252,7 +260,7 @@ const setYellowHover=(x,y,currPower)=>{
           {
             yellows.map(yellow => (
               <PionJaune
-                key={yellow.id}
+                key={getId('y', yellow.y)}
                 x={yellow.x}
                 y={yellow.y}
                 powerGo={yellow.powerGo}
