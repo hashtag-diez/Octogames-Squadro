@@ -31,6 +31,9 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
   const getCurrentPower = () => {
     return currPower
   }
+  const getCurrentPower = () => {
+    return currPower
+  }
   useEffect(() => {
     if (x === 6) {
       setStartAtTheOtherSide(true)

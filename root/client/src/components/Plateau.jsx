@@ -17,22 +17,22 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
       ]
   )
   const [yellows, setYellows] = useState(
-      [
-        { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-        { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-        { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-        { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-        { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
-      ]
+    [
+      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1 },
+      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3 },
+      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2 },
+      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3 },
+      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1 }
+    ]
   )
   const [reds, setReds] = useState(
-      [
-        { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-        { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-        { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-        { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-        { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
-      ]
+    [
+      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 },
+      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
+      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2 },
+      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
+      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 }
+    ]
   )
 
   const [turn, setTurn] = useState('y')
@@ -178,6 +178,11 @@ const setYellowHover=(x,y,currPower)=>{
       console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
       return res
     }
+  }
+  const getId = (type, id) => {
+    const newId = `${type}${id}`
+    console.log(newId)
+    return newId
   }
   const getId = (type, id) => {
     const newId = `${type}${id}`
