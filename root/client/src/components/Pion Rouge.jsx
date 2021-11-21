@@ -21,6 +21,9 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
       }
     }
   }
+  const getCurrentPower = () => {
+    return currPower
+  }
   useEffect(() => {
     if (y === 6) {
       setStartAtTheOtherSide(true)

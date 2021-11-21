@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
+import Evaluation from '../js/bot/fonctionEvaluation.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
 export const Plateau = () => {
@@ -17,20 +18,20 @@ export const Plateau = () => {
   )
   const [yellows, setYellows] = useState(
     [
-      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1 },
+      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3 },
+      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2 },
+      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3 },
+      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1 }
     ]
   )
   const [reds, setReds] = useState(
     [
-      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 },
+      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
+      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2 },
+      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
+      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 }
     ]
   )
 
@@ -57,12 +58,22 @@ export const Plateau = () => {
   const updateYellows = (x, y) => {
     const newYellows = [...yellows]
     newYellows[y - 1].x = x
+    newYellows[y - 1].currentPower = getUpdatePower( y, 'y')
     setYellows(newYellows)
   }
   const updateReds = (x, y) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
+    newReds[x - 1].currentPower = getUpdatePower(x, 'r')
     setReds(newReds)
+  }
+  const getUpdatePower = (x, type) => {
+    const id = `${type}${x}`
+    console.log(id)
+    const pawn = document.getElementById(id)
+    console.log(pawn)
+    console.log(pawn?.getCurrentPower())
+    return 'power'
   }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -110,6 +121,11 @@ export const Plateau = () => {
     // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
+  }
+  const getId = (type, id) => {
+    const newId = `${type}${id}`
+    console.log(newId)
+    return newId
   }
   const handleYellowPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -173,7 +189,7 @@ export const Plateau = () => {
           {
             reds.map(red => (
               <PionRouge
-                key={red.id}
+                key={getId('r', red.x)}
                 x={red.x}
                 y={red.y}
                 powerGo={red.powerGo}
@@ -188,7 +204,7 @@ export const Plateau = () => {
           {
             yellows.map(yellow => (
               <PionJaune
-                key={yellow.id}
+                key={getId('y', yellow.y)}
                 x={yellow.x}
                 y={yellow.y}
                 powerGo={yellow.powerGo}
