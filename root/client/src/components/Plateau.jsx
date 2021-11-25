@@ -151,6 +151,8 @@ const setYellowHover=(x,y,currPower)=>{
     }
     // Si dépassement imprévu, on replace le pion aux bordures du plateau
     const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
+    if (res === 6) currBoard[x][res] = 'R'
+    else currBoard[x][res] = state
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
@@ -255,7 +257,7 @@ const setYellowHover=(x,y,currPower)=>{
                 powerGo={yellow.powerGo}
                 powerReturn={yellow.powerReturn}
                 handlePlay={handleYellowPlay}
-                turn={turn}
+                turn='y'
               />
             ))
           }
