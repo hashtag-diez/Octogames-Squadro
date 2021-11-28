@@ -4,10 +4,11 @@ import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 
 const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [posY, setPosY] = useState(y)
-  const [animateSlide, setAnimateSlide] = useState('')
-  const [animateRotate, setAnimateRotate] = useState('')
+  const [animateSlide, setAnimateSlide] = useState(false)
+  const [animateRotate, setAnimateRotate] = useState(false)
   const [currPower, setCurrPower] = useState(powerGo)
   const [distance, setDistance] = useState(0)
+  const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'r') {
@@ -21,9 +22,14 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
     }
   }
   useEffect(() => {
-    if (posY !== 0 || animateRotate === 'true') {
-      setAnimateSlide('true')
-      if (posY === 0 && animateRotate === 'true') {
+    if (y === 6) {
+      setStartAtTheOtherSide(true)
+    }
+  }, [])
+  useEffect(() => {
+    if (posY !== 0 || animateRotate) {
+      setAnimateSlide(true)
+      if (posY === 0 && animateRotate) {
         const timer = setTimeout(() => {
           setCurrPower(0)
         }, 500) // The duration of the animation defined in the CSS file
@@ -33,8 +39,8 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
       }
       if (posY === 6) {
         const timer = setTimeout(() => {
-          setAnimateSlide('false')
-          setAnimateRotate('true')
+          setAnimateSlide(false)
+          setAnimateRotate(true)
           setCurrPower(powerReturn)
         }, 400) // The duration of the animation defined in the CSS file
         return () => {
@@ -43,12 +49,19 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
       }
     }
   }, [posY])
-  return (
-    <>
-      <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-    </>
-
-  )
+  if (!startAtTheOtherSide) {
+    return (
+      <>
+        <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+      </>
+    )
+  } else {
+    return (
+      <>
+        <StyledRedReversed animateSlide={animateSlide} curr={posY} step={powerReturn} onClick={(e) => handleMovement(e)} />
+      </>
+    )
+  }
 }
 const slideGo = (a, b) =>
   keyframes`
@@ -77,9 +90,13 @@ const rotate = keyframes`
   }
 `
 const StyledRed = styled(Red)`
-  animation: ${({ animateSlide, curr, step }) => (animateSlide === 'true' ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
-  ${({ animateSlide, animateRotate }) => (animateRotate === 'true' && animateSlide === 'false' ? rotate : '')} 0.3s ease-in-out forwards,
-  ${({ animateSlide, animateRotate, curr, step }) => (animateRotate === 'true' && animateSlide === 'true' ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
+  ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
+  ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+`
+const StyledRedReversed = styled(StyledRed)`
+  transform: translateX(calc(6*94px)) rotate(180deg);
+  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 
 export default PionRouge

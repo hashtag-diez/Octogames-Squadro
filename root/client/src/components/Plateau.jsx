@@ -39,18 +39,18 @@ export const Plateau = () => {
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
-      const [powerGo, powerReturn, state] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][newReds[x - 1].y]]
+      const [powerGo, powerReturn, origin] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0]]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() + x, x: x, y: (state === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn }
+      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn }
     })
     setReds(newReds)
   }
   const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
     list.forEach(y => {
-      const [powerGo, powerReturn, state] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[newYellows[y - 1].x][newYellows[y - 1].y]]
+      const [powerGo, powerReturn, origin] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y]]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() + y, x: (state === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn }
+      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn }
     })
     setYellows(newYellows)
   }
@@ -81,18 +81,18 @@ export const Plateau = () => {
     */
     for (i = y; (power > 0 ? i <= y + distance : i >= y + distance) ; (power > 0 ? i++ : i--)) {
       // Si un pion Jaune est rencontré, retour à la case départ et incrémentation de la distance
-      if (currBoard[x][i].toLowerCase() === 'y') {
+      if (i < 6 && currBoard[x][i].toLowerCase() === 'y') {
         distance = (power > 0 ? distance + 1 : distance - 1)
         deadPawn.push(i)
-        currBoard[(currBoard[x][y] === 'y' ? 0 : 6)][i] = currBoard[x][i]
+        currBoard[(currBoard[x][i] === 'y' ? 0 : 6)][i] = currBoard[x][i]
         currBoard[x][i] = '+'
       }
     }
     // Si dépassement imprévu, on replace le pion aux bordures du plateau
     const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
+    replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
-    replaceYellowPawn(deadPawn)
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
@@ -127,7 +127,7 @@ export const Plateau = () => {
     */
     for (i = x; (power > 0 ? i <= x + distance : i >= x + distance); (power > 0 ? i++ : i--)) {
       // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
-      if (currBoard[i][y].toLowerCase() === 'r') {
+      if (i < 6 && currBoard[i][y].toLowerCase() === 'r') {
         distance = (power > 0 ? distance + 1 : distance - 1)
         deadPawn.push(i)
         currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
@@ -150,7 +150,6 @@ export const Plateau = () => {
     console.log(res)
     if (x === 0 || x === 6) currBoard[x][y] = '|'
     else currBoard[x][y] = '+'
-    currBoard[res][y] = 'y'
     updateYellows(res, y)
     setBoard(currBoard)
     // setTurn('r')
