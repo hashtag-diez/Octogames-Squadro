@@ -203,6 +203,8 @@ Pensez à **prévenir vos collègues** du merge afin qu'ils puissent effectuer u
 <a name=6.-effectuer-des-rebase></a>
 ### 6. Effectuer des rebase
 
+> Certaines des opérations suivantes nécessitent l'instalation de [Git Extension](https://sourceforge.net/projects/gitextensions/), notament le ```rebase --continue``` qui cherche à ouvrir un fichier d'information via un exécutable de l'extension. En cas de problème, n'hésitez pas à l'installer. 
+
 Lorsqu'une branche est mergé dans la develop, il est nécessaire pour toutes les autres branches de **récupérer la version la plus récente de la develop** afin d'anticiper les conflits éventuels. 
 Placez-vous sur la develop dans votre répertoire local, puis effectuez les commandes suivantes. 
 
