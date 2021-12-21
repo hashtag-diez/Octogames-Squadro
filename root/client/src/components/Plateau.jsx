@@ -81,7 +81,7 @@ export const Plateau = () => {
     */
     for (i = y; (power > 0 ? i <= y + distance : i >= y + distance) ; (power > 0 ? i++ : i--)) {
       // Si un pion Jaune est rencontré, retour à la case départ et incrémentation de la distance
-      if (i < 6 && currBoard[x][i].toLowerCase() === 'y') {
+      if (i > 0 && i < 6 && currBoard[x][i].toLowerCase() === 'y') {
         distance = (power > 0 ? distance + 1 : distance - 1)
         deadPawn.push(i)
         currBoard[(currBoard[x][i] === 'y' ? 0 : 6)][i] = currBoard[x][i]
@@ -127,7 +127,7 @@ export const Plateau = () => {
     */
     for (i = x; (power > 0 ? i <= x + distance : i >= x + distance); (power > 0 ? i++ : i--)) {
       // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
-      if (i < 6 && currBoard[i][y].toLowerCase() === 'r') {
+      if (i > 0 && i < 6 && currBoard[i][y].toLowerCase() === 'r') {
         distance = (power > 0 ? distance + 1 : distance - 1)
         deadPawn.push(i)
         currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
