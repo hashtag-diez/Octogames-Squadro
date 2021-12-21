@@ -6,7 +6,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
-  const [currPower, setCurrPower] = useState(powerGo)
+  const [currPower, setCurrPower] = useState((y === 6 ? powerReturn : powerGo))
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
@@ -61,11 +61,22 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   } else {
     return (
       <>
-        <StyledRedReversed animateSlide={animateSlide} curr={posY} step={powerReturn} onClick={(e) => handleMovement(e)} />
+        <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
       </>
     )
   }
 }
+const spawn = (direction) =>
+  keyframes`
+    0%{
+      opacity : 0;
+      transform: ${(direction === 'back' ? 'translateX(calc(564px)) rotate(180deg)' : 'translateX(calc(0*94px)) rotate(0deg)')}
+    }
+    100%{
+      opacity : 100;
+      transform: ${(direction === 'back' ? 'translateX(calc(564px)) rotate(180deg)' : 'translateX(calc(0*94px)) rotate(0deg)')}
+    }
+  `
 const slideGo = (a, b) =>
   keyframes`
     0%{
@@ -93,13 +104,12 @@ const rotate = keyframes`
   }
 `
 const StyledRed = styled(Red)`
-  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
+  animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 const StyledRedReversed = styled(StyledRed)`
-  transform: translateX(calc(6*94px)) rotate(180deg);
-  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+  animation:  ${spawn('back')} 1.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 
 export default PionRouge

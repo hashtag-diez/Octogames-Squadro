@@ -6,7 +6,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
-  const [currPower, setCurrPower] = useState(powerGo)
+  const [currPower, setCurrPower] = useState((x === 6 ? powerReturn : powerGo))
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
@@ -66,6 +66,17 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
     )
   }
 }
+const spawn = (direction) =>
+  keyframes`
+    0%{
+      opacity : 0;
+      transform: ${(direction === 'back' ? 'translateY(calc(564px)) rotate(180deg)' : 'translateY(0px) rotate(0deg)')}
+    }
+    100%{
+      opacity : 100;
+      transform: ${(direction === 'back' ? 'translateY(calc(564px)) rotate(180deg)' : 'translateY(0) rotate(0deg)')}
+    }
+  `
 const slideGo = (a, b) =>
   keyframes`
     0%{
@@ -93,12 +104,11 @@ const rotate = keyframes`
   }
 `
 const StyledDiv = styled.div`
-  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
+  animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 const StyledDivReversed = styled(StyledDiv)`
-  transform: translateY(calc(6*94px)) rotate(180deg);
-  animation: ${({ animateSlide, curr, step }) => (animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+  animation: ${spawn('back')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
 `
 export default PionJaune
