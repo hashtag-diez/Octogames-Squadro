@@ -158,7 +158,7 @@ export const Plateau = () => {
     return res
   }
   return (
-    <>
+    <div>
       <h1>
         Rouge : {score[0]}
         &emsp;
@@ -200,7 +200,7 @@ export const Plateau = () => {
           }
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
