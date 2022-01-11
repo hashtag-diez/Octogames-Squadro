@@ -2,40 +2,51 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 const URL = 'https://avatars.dicebear.com/api/'
 
-export const Icone = () => {
-  const [seed, setSeed] = useState('a')
-  const [sprite, setSprite] = useState('adventurer')
-  const [img, setImg] = useState('')
+export const Icone = ({ editor, name, theme }) => {
+  const [seed, setSeed] = useState(!editor ? name : 'p')
+  const [sprite, setSprite] = useState(!editor ? theme : 'adventurer')
+  const [img, setImg] = useState(URL + sprite + '/' + seed + '.svg')
   const handleChange = (e) => {
     e.preventDefault()
     setSeed(e.target.value)
     setImg(URL + sprite + '/' + seed + '.svg')
   }
   const handleSelect = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     setSprite(e.target.value.toLowerCase().replace(/\s/g, '-'))
-    setImg(URL + sprite + '/' + seed + '.svg')
+    setImg(URL + e.target.value.toLowerCase().replace(/\s/g, '-') + '/' + seed + '.svg')
   }
   const options = ['Adventurer', 'Adventurer Neutral', 'Avataaars', 'Big Ears', 'Big Ears Neutral', 'Big Smile', 'Bottts', 'Croodles', 'Croodles Neutral', 'Female', 'Gridy', 'Human', 'Identicon', 'Initials', 'Jdenticon', 'Male', 'Micah', 'Miniavs', 'Open Peeps', 'Personas', 'Pixel Art', 'Pixel Art Neutral']
-  return (
-    <StyledDiv>
-      <StyledWrapper>
-        <img src={img} />
-      </StyledWrapper>
-      <StyledInput onChange={e => handleChange(e)} type='text' placeholder='Votre pseudo' />
-      <StyledSelect onChange={e => handleSelect(e)} name='sprite'>
-        {
-          options.map(opt => (
-            <option
-              key={opt}
-            >
-              {opt}
-            </option>
-          ))
-        }
-      </StyledSelect>
-    </StyledDiv>
-  )
+  if (editor) {
+    return (
+      <StyledDiv>
+        <StyledWrapper>
+          <img src={img} />
+        </StyledWrapper>
+        <StyledInput onChange={e => handleChange(e)} type='text' placeholder='Votre pseudo' />
+        <StyledSelect onChange={e => handleSelect(e)} name='sprite'>
+          {
+            options.map(opt => (
+              <option
+                key={opt}
+              >
+                {opt}
+              </option>
+            ))
+          }
+        </StyledSelect>
+      </StyledDiv>
+    )
+  } else {
+    return (
+      <StyledDivMin>
+        <StyledWrapperMin>
+          <img src={img} />
+        </StyledWrapperMin>
+        <h3>{seed}</h3>
+      </StyledDivMin>
+    )
+  }
 }
 const StyledDiv = styled.div`
   display: flex;
@@ -43,6 +54,12 @@ const StyledDiv = styled.div`
   justify-content: center;
   align-items: center;
   gap: 30px;
+`
+const StyledDivMin = styled(StyledDiv)`
+  gap: 0px;
+  h3{
+    margin: 10px 0px;
+  }
 `
 const StyledSelect = styled.select`
   background-color: transparent;
@@ -85,4 +102,9 @@ const StyledWrapper = styled.div`
   img{
     width: 100%;
   }
+`
+const StyledWrapperMin = styled(StyledWrapper)`
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
 `
