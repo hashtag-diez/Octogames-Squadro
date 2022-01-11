@@ -61,7 +61,7 @@ export const Plateau = () => {
     newYellows[y - 1].currentPower = power
     setYellows(newYellows)
   }
-  const updateReds = (x, y) => {
+  const updateReds = (x, y, power) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
     newReds[x - 1].currentPower = power
