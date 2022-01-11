@@ -1,9 +1,10 @@
 import './style/App.css'
-import Plateau from './components/Plateau'
+// import Plateau from './components/Plateau'
+import Home from './pages/Home'
 function App () {
   return (
     <div className='App'>
-      <Plateau />
+      <Home />
     </div>
   )
 }
