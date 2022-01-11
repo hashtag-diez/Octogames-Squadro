@@ -133,12 +133,11 @@ io.on('connection', (socket) => {
     })
 
     //Mouvements des pions (à modifier)
-    socket.on("Move1", (keysPressed, room) => {
-        // console.log(keysPressed, room);
-        socket.to(room).emit("Move2", keysPressed);
+    socket.on("myMove", (posX, posY, room) => {
+        // console.log(posX, posY, room);
+        socket.to(room).emit("opponentMove", posX, posY);
     })
 
-    //Deconnexion (à modifier)
     socket.on("disconnect",()=>{
         console.log('${socket.username} Disconnected');
     })
