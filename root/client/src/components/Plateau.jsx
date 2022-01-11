@@ -40,31 +40,31 @@ export const Plateau = () => {
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
-      const [powerGo, powerReturn, origin] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0]]
+      const [powerGo, powerReturn, origin, currentPower] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn }
+      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
     })
     setReds(newReds)
   }
   const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
     list.forEach(y => {
-      const [powerGo, powerReturn, origin] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y]]
+      const [powerGo, powerReturn, origin, currentPower] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn }
+      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
     })
     setYellows(newYellows)
   }
-  const updateYellows = (x, y) => {
+  const updateYellows = (x, y, power) => {
     const newYellows = [...yellows]
     newYellows[y - 1].x = x
-    newYellows[y - 1].currentPower = getUpdatePower( y, 'y')
+    newYellows[y - 1].currentPower = power
     setYellows(newYellows)
   }
   const updateReds = (x, y) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
-    newReds[x - 1].currentPower = getUpdatePower(x, 'r')
+    newReds[x - 1].currentPower = power
     setReds(newReds)
   }
   const getUpdatePower = (x, type) => {
@@ -115,7 +115,7 @@ export const Plateau = () => {
     // Si le pion a quitté une bordure de sa ligne/colonne
     if (y === 0 || y === 6) currBoard[x][y] = '—'
     else currBoard[x][y] = '+'
-    updateReds(x, res)
+    updateReds(x, res, power)
     setBoard(currBoard)
     /* setTurn ('y') */
     // console.log(board)
@@ -166,7 +166,7 @@ export const Plateau = () => {
     console.log(res)
     if (x === 0 || x === 6) currBoard[x][y] = '|'
     else currBoard[x][y] = '+'
-    updateYellows(res, y)
+    updateYellows(res, y, power)
     setBoard(currBoard)
     // setTurn('r')
     // console.log(board)
