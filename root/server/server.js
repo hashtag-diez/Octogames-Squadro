@@ -133,9 +133,11 @@ io.on('connection', (socket) => {
     })
 
     //Mouvements des pions (à modifier)
-    socket.on("myMove", (posX, posY, room) => {
-        // console.log(posX, posY, room);
-        socket.to(room).emit("opponentMove", posX, posY);
+    //Lorsqu'un pion est déplacé, son numéro est envoyé au serveur, le serveur envoit un message 
+    //au client qui va déplacer ce pion
+    socket.on("pionMove", (numPion, room) => {
+        // console.log(numPion, room);
+        socket.to(room).emit("opponentPionMove", numPion);
     })
 
     socket.on("disconnect",()=>{
