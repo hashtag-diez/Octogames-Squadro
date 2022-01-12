@@ -1,0 +1,11 @@
+# Settings in the [build] context are global and are applied to all contexts
+# unless otherwise overridden by more specific contexts.
+[build]
+  base = "root/client/"
+  publish = "/"
+  command = "echo 'default context'"
+
+[[redirects]]
+  from = "/*"
+  to = "/public/index.html"
+  status = 200

@@ -1,0 +1,25 @@
+name: Publish Front-end on Netlify
+on: 
+  push:
+    branches: [ main ]
+defaults:
+  run:
+    working-directory: ./root/client
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@uv2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+    - run: npm ci
+    - run: npm test
+    - run: npm run build
+    - name: Publishing the Front
+      uses: netlify/actions/build@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+    
