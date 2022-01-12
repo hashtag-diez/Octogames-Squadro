@@ -1,20 +1,16 @@
 import PARAMETRES from '../../json/evaluation.json'
 
 //retourne la valeur d'un coup
-export default function Evaluation(idPion, color, listYellow, listRed, currPlateau, currPower){
-    let pawn;
-    if(color === "yellow"){
-        pawn = listYellow.filter(pion =>  pion.id === idPion);
-    }
-    else{
-        pawn = listRed.filter(pion =>  pion.id === idPion);
-    }
-    const x = pawn[0].x;
-    const y = pawn[0].y;
-    const aller = pawn[0].aller;
-    console.log("le pouvoir : ", currPower);
+export default function Evaluation(pion, color, listYellow, listRed, currPlateau){
+    const x = pion.x;
+    console.log("X: ",x)
+    const y = pion.y;
+    console.log("Y: ",y)
+    const aller = pion.aller;
+    const currPower = pion.currentPower;
+    console.log("le pouvoir : ", pion.currentPower);
     const pawnParameters = {
-        id: idPion,
+        id: pion.id,
         AR: (currPower > 0)? 1 : 0,
         move : currPower,
         presentRisk : evalPresentRisk(x, y, color , currPower, currPlateau, listYellow, listRed),
@@ -23,7 +19,7 @@ export default function Evaluation(idPion, color, listYellow, listRed, currPlate
         staking : evalStack(x,y, color, listYellow, listRed),
         distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6
     }
-    //console.log(pawnParameters);
+    console.log(pawnParameters);
     const allerRetour = (aller === 1) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
     const deplacement = PARAMETRES['DEPLACEMENT'][`${pawnParameters.move}`];
     const risquePresent = pawnParameters.distance * pawnParameters.presentRisk * PARAMETRES["RISQUE"]["PRESENT"];
@@ -38,46 +34,47 @@ export default function Evaluation(idPion, color, listYellow, listRed, currPlate
     }
 }
 
-function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){
 
+function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){
     //à revoir quand la valeur de currentPower peut être récupérée pour tous les pions
     let coordonee = (color === "yellow" ? x : y); /* coordonnée variant en fonction de si on est rouge ou jaune */
-    const next = (coordonee + currPower > 6 && currPower > 0 ? 6 : (coordonee + currPower < 0 && currPower < 0 ? 0 :  coordonee + currPower));
+    const next = evalDistance(coordonee, currPower)
+
     if(color === "yellow"){
         const pionAdverse = listRed.filter(pion => pion.x === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
-        console.log(pionAdverse);
+        if(pionAdverse.length > 0){
+        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].y < y ? true : false); /* le pion adverse ne peut pas me manger */
 
-        const horsDePortee = (pionAdverse.currentPower < 0 && pionAdverse.y < y ? true : false); /* le pion adverse ne peut pas me manger */
         if(horsDePortee == false){
-            return pionAdverse.currentPower; /* je risque de me faire manger si je me déplace a cette case*/
+            return pionAdverse[0].currentPower; /* je risque de me faire manger si je me déplace a cette case*/
         }
-        else{
-            return 0; /* pas de risque d'être mangé apres m'être déplacé */
         }
     }
     else{
         const pionAdverse = listYellow.filter(pion => pion.y === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
-        console.log(pionAdverse);
-
-        const horsDePortee = (pionAdverse.currentPower < 0 && pionAdverse.x < x ? true : false); /* le pion adverse ne peut pas me manger */
+        if(pionAdverse.length > 0){
+        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].x < x ? true : false); /* le pion adverse ne peut pas me manger */
         if(horsDePortee == true){
-            return pionAdverse.currentPower;
+            return pionAdverse[0].currentPower;
         }
-        else{
-            return 0; /* je risque de me faire manger si je me déplace a cette case*/
         }
     }
+    return 0;
 }
 
 function evalPresentRisk(x, y, color, currPower, currPlateau, listYellow, listRed){
-    let pionNonProteges;
+    let pionNonProteges = 0;
     if(color === "yellow"){
         const pionAdverse = listRed.filter(pion => pion.x === x); /* y a t-il un pion adverse sur la meme ligne où je suis actuellement */
-        pionNonProteges = evalMenace(pionAdverse[0].x, pionAdverse[0].y, 'red', pionAdverse[0].currentPower, currPlateau);
+        if(pionAdverse.length > 0){
+          pionNonProteges = evalMenace(pionAdverse[0].x, pionAdverse[0].y, 'red', pionAdverse[0].currentPower, currPlateau);
+        }
     }
     else{
         const pionAdverse = listYellow.filter(pion => pion.y === y); /* y a t-il un pion adverse sur la meme ligne où je suis actuellement */
-        pionNonProteges = evalMenace(pionAdverse[0].y, pionAdverse[0].y, 'yellow', pionAdverse[0].currentPower, currPlateau);
+        if(pionAdverse.length > 0){
+          pionNonProteges = evalMenace(pionAdverse[0].y, pionAdverse[0].y, 'yellow', pionAdverse[0].currentPower, currPlateau);
+        }
     }
     if(pionNonProteges > 0){
         return 5; /* je risque de me faire manger au prochain tour il faut que je déplace le pion (+BOT -PLAYER)*/

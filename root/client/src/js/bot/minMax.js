@@ -1,5 +1,4 @@
 import Evaluation from './fonctionEvaluation.js'
-import Plateau from "../../components/Plateau";
 
 const powers ={
     1 : -3,
@@ -54,7 +53,7 @@ function deletePawn(node, id, isYellow){
         let newYellows = [];
         let yellows = node.yellows;
         yellows.forEach(pawn =>{
-            if(pawn.id !== id){
+            if(pawn.id != id){
                 newYellows.push(pawn);
             }
         });
@@ -63,7 +62,7 @@ function deletePawn(node, id, isYellow){
         let newReds = [];
         let reds = node.reds;
         reds.forEach(pawn =>{
-            if(pawn.id !== id){
+            if(pawn.id != id){
                 newReds.push(pawn);
             }
         });
@@ -119,7 +118,7 @@ function movePawnYellow(node){
     /* déplacement du pion */
     const arrivee = x + distance; /* coordonnée d'arrivée */
 
-    if(currentPower < 0 && arrivee === 0) {
+    if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, true);
         console.log("pion n° ", node.pion.id, " a fait un aller retour !");
         this.botScore++;
@@ -284,14 +283,14 @@ function createTree(board, depth, listYellow, listRed){
 
     listYellow.forEach(pion => {
         const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, true);
-        let node = new TreeNode(true, board, p.id, p, listReds, listYellows);
+        let node = new TreeNode(false, board, p.id, p, listReds, listYellows);
         handleNode(node, depth);
         root.push(node);
     })
     return root;
 }
 
-function MinMax(node, depth, maximizingPlayer){
+export default function MinMax(node, depth, maximizingPlayer){
     // listYellow, listRed, currPlateau
     const listYellow = node.yellows;
     const listRed = node.reds;
@@ -299,13 +298,12 @@ function MinMax(node, depth, maximizingPlayer){
     const winner = checkWinner(node);
 
     if(winner != null){
-        console.log(winner + " has won !\n");
-        return;
+        return ;
     }
 
     if (depth == 0 || node.children.length==0){
-        let evaluation = Evaluation(node.idPawn, listYellow, listRed, node.currentBoard, node.pion.currentPower);
-        evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
+        let evaluation = Evaluation(node.pion, listYellow, listRed, node.currentBoard, node.pion.currentPower);
+        evaluation = (isMaxPlayer? evaluation :  - evaluation);
         return evaluation;
     }
 
@@ -334,8 +332,8 @@ function MinMax(node, depth, maximizingPlayer){
 
 }
 
-export default function nextMove(listYellow, listRed, board) {
-    /*const depth = 5
+function nextMove(listYellow, listRed, board) {
+    const depth = 5
 
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
@@ -357,6 +355,5 @@ export default function nextMove(listYellow, listRed, board) {
             highScore = nodes[i].score;
         }
     }
-    return idPion;*/
-    return 1
+    return idPion;
 }
