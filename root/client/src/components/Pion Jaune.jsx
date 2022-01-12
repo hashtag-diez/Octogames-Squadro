@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
-import { ReactComponent as Yellow } from '../assets/Pion jaune.svg'
+import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 
 const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [posX, setPosX] = useState(x)
