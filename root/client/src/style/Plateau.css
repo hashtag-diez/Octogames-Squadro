@@ -29,6 +29,6 @@
   flex-direction: column;
   gap: 64px;
   width: 94px;
-  height: calc(100%-188px);
+  height: calc(100%);
 }
 

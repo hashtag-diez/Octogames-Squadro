@@ -1,0 +1,21 @@
+
+
+#games{
+    margin-left: 5%;
+    margin-top: 10%;
+    display:flex;
+    flex-direction: column;
+
+}
+
+link{
+    width:200px;
+    height:100px;
+}
+.options{
+    width:200px;
+    height:100px;
+
+}
+
+

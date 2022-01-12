@@ -1,7 +1,9 @@
-mport React, { useEffect, useState } from 'react'
+import Plateau from "./Plateau";
+
+import React, { useEffect, useState } from 'react'
 
 
-export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom }) {
+function WelcomeScreen({ player, setPlayer, socket ,room, setRoom }) {
     const [name, setName] = useState(player.name);
     const [error, setError] = useState();
     const [roomText, setRoomText] = useState("");
@@ -43,7 +45,7 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
             <div className="welcome-page">
                     <h2>Welcome !</h2>
                     <hr />
-                    {player.name ? 
+                    {player.name} ?
                         //Create room opt and Join room opt 
                     
                     :
@@ -62,3 +64,5 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
             </div>
     )
 }
+
+export default WelcomeScreen
