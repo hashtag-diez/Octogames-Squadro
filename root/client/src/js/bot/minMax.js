@@ -1,5 +1,4 @@
 import Evaluation from './fonctionEvaluation.js'
-import Plateau from "../../components/Plateau";
 
 const powers ={
     1 : -3,
@@ -47,30 +46,6 @@ function getPawns(list, isYellow){
         pawns.push(newPawn);
     });
     return pawns;
-}
-
-
-function handleNode(parentNode, depth){
-    if(depth == 0) {
-        return
-    }
-    const isYellow = parentNode.pion.isYellow
-
-    //simulation du mouvement
-    if(isYellow) {
-        movePawnYellow(parentNode)
-    } else {
-        movePawnRed(parentNode)
-    }
-
-    //création des noeuds de la profondeur suivante
-    let currentList = (isYellow) ? parentNode.reds : parentNode.yellows
-    currentList.forEach(pion => {
-        const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, !isYellow);
-        let node = new TreeNode(false, parentNode.currentBoard, p.id, p, parentNode.reds, parentNode.yellows);
-        parentNode.children.push(node);
-        handleNode(parentNode, depth - 1);
-    })
 }
 
 function deletePawn(node, id, isYellow){
@@ -234,7 +209,6 @@ function majRedDeadPawn(node, y, list){
     });
 }
 
-
 function majYellowDeadPawn(node, x, list){
     let yellows = node.yellows;
     /* MAJ pions mangés -> retour case départ */
@@ -252,7 +226,6 @@ function majYellowDeadPawn(node, x, list){
         }
     });
 }
-
 
 const updateYellows = (node, id, x, y, power, aller) => {
     //let yellows = node.yellows;
@@ -280,6 +253,28 @@ const updateReds = (node, id, x, y, power, aller) => {
     });
 }
 
+function handleNode(parentNode, depth){
+    if(depth == 0) {
+        return;
+    }
+    const isYellow = parentNode.pion.isYellow;
+
+    //simulation du mouvement ---> SIMULATION DU MOUVEMENT DANS L'ALGO MIN MAX
+    // if(isYellow) {
+    //     movePawnYellow(parentNode);
+    // } else {
+    //     movePawnRed(parentNode);
+    // }
+
+    //création des noeuds de la profondeur suivante
+    let currentList = (isYellow) ? parentNode.reds : parentNode.yellows;
+    currentList.forEach(pion => {
+        const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, !isYellow);
+        let node = new TreeNode(!parentNode.isMaxPlayer, parentNode.currentBoard, p.id, p, parentNode.reds, parentNode.yellows);
+        parentNode.children.push(node);
+        handleNode(node, depth - 1);
+    });
+}
 
 function createTree(board, depth, listYellow, listRed){
     const root = [];
@@ -287,10 +282,10 @@ function createTree(board, depth, listYellow, listRed){
     let listReds = getPawns(listRed, false);
 
     listYellow.forEach(pion => {
-    const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, true);
-    let node = new TreeNode(false, board, p.id, p, listReds, listYellows);
-    handleNode(node, depth);
-    root.push(node)
+        const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, true);
+        let node = new TreeNode(false, board, p.id, p, listReds, listYellows);
+        handleNode(node, depth);
+        root.push(node);
     })
     return root;
 }
@@ -300,17 +295,26 @@ export default function MinMax(node, depth, maximizingPlayer){
     const listYellow = node.yellows;
     const listRed = node.reds;
     let value;
+    const winner = checkWinner(node);
+
+    if(winner != null){
+        console.log(winner + " has won !\n");
+        return;
+    }
 
     if (depth == 0 || node.children.length==0){
         let evaluation = Evaluation(node.idPawn, listYellow, listRed, node.currentBoard, node.pion.currentPower);
-        evaluation = (node.pion.isYellow ? evaluation :  - evaluation);
+        evaluation = (isMaxPlayer? evaluation :  - evaluation);
         return evaluation;
     }
 
-    const children = node.children;
-
     if (maximizingPlayer){
         value = -Infinity;
+
+        movePawnYellow(node);   // make move
+    
+        handleNode(node, 1);    //create children nodes (reds)
+        const children = node.children;
         children.forEach(child =>{
             value = Math.max(value,MinMax(child, depth-1, false, listYellow, listRed));
         })
@@ -318,9 +322,12 @@ export default function MinMax(node, depth, maximizingPlayer){
     }
     else{
         value = Infinity;
+        movePawnRed(node);
+        handleNode(node, 1); 
+        const children = node.children;
         children.forEach(child =>{
             value = Math.min(value,MinMax(child, depth-1, true, listYellow, listRed));
-        })
+        });
         return value;
     }
 
@@ -332,12 +339,12 @@ function nextMove(listYellow, listRed, board) {
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
     //définir depth en fonction de la précision nécessaire
-    const nodes = createTree(board, depth, listYellow, listRed)
+    const nodes = createTree(board, depth, listYellow, listRed);
 
     //minMax + élagage
     nodes.forEach(node => {
         node.score = MinMax(node, depth, true);
-        console.log(node.score + "\n");
+        console.log("node score = " + node.score + "\n");
     })
 
     let idPion = nodes[0].idPawn;
