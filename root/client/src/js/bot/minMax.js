@@ -201,6 +201,7 @@ function movePawnRed(node){
         deletePawn(node, pion.id, false);
         console.log("pion n° ", node.pion.id, " a fait un aller retour !");
         node.pion = null;
+        node.playerScore++;
         return;
     }
     if(pion.currentPower > 0 && arrivee === 6){ /* le pion a fait un aller */
