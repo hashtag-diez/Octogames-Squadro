@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
-import Evaluation from '../js/bot/fonctionEvaluation.js'
+import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
 export const Plateau = () => {
@@ -35,8 +35,9 @@ export const Plateau = () => {
     ]
   )
 
+  const [againstBot, setAgainstBot] = useState(true)
   const [score, setScore] = useState([0, 0])
-  /* const [turn, setTurn] = useState('y') */
+  const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -66,14 +67,6 @@ export const Plateau = () => {
     newReds[x - 1].y = y
     newReds[x - 1].currentPower = power
     setReds(newReds)
-  }
-  const getUpdatePower = (x, type) => {
-    const id = `${type}${x}`
-    console.log(id)
-    const pawn = document.getElementById(id)
-    console.log(pawn)
-    console.log(pawn?.getCurrentPower())
-    return 'power'
   }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -117,16 +110,21 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateReds(x, res, power)
     setBoard(currBoard)
-    /* setTurn ('y') */
+    setTurn ('y')
     // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
   }
-  const getId = (type, id) => {
-    const newId = `${type}${id}`
-    console.log(newId)
-    return newId
+  const handleBotPlay = () => {
+    let idNextPawn = nextMove([...yellows], [...reds], [...board])
+    const pawn = yellows[idNextPawn - 1]
+    triggerClick(idNextPawn, 'yellow')
   }
+  const triggerClick = (i, side) => {
+    const pawn = (side==='red' ? document.querySelector('.red-row').childNodes[i-1] : document.querySelector('.yellow-row').childNodes[i-1])
+    const event = new Event('click', { bubbles : true })
+    pawn.dispatchEvent(event)
+}
   const handleYellowPlay = (x, y, power) => {
     const currBoard = [...board]
     const deadPawn = []
@@ -168,11 +166,12 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateYellows(res, y, power)
     setBoard(currBoard)
-    // setTurn('r')
+    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
   }
+
   return (
     <>
       <h1>
@@ -180,22 +179,24 @@ export const Plateau = () => {
         &emsp;
         Jaune : {score[1]}
       </h1>
-      {/*
+      {
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      */}
+      }
       <div className='board-wrapper'>
         <Board />
         <div className='red-row'>
           {
             reds.map(red => (
               <PionRouge
-                key={getId('r', red.x)}
+                key={red.id}
                 x={red.x}
                 y={red.y}
                 powerGo={red.powerGo}
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
-                turn='r'
+                handleBotPlay={handleBotPlay}
+                isAgainstBot={againstBot}
+                turn={turn}
               />
             ))
           }
@@ -204,13 +205,14 @@ export const Plateau = () => {
           {
             yellows.map(yellow => (
               <PionJaune
-                key={getId('y', yellow.y)}
+                id={"y" + yellow.id}
+                key={yellow.id}
                 x={yellow.x}
                 y={yellow.y}
                 powerGo={yellow.powerGo}
                 powerReturn={yellow.powerReturn}
                 handlePlay={handleYellowPlay}
-                turn='y'
+                turn={turn}
               />
             ))
           }

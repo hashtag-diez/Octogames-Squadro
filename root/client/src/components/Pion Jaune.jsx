@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
+const PionJaune = ({id, x, y, powerGo, powerReturn, handlePlay, turn}) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -11,8 +11,11 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y') {
+    console.log("handle movement " + turn)
+    if (turn === 'y' || ! e.isTrusted) {
+      console.log("handle movement" + turn)
       if (currPower !== 0) {
+        console.log("handle movement")
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
@@ -20,9 +23,6 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
         console.log('%cPion inactif...', 'font-style: italic')
       }
     }
-  }
-  const getCurrentPower = () => {
-    return currPower
   }
   useEffect(() => {
     if (x === 6) {
@@ -54,13 +54,13 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   }, [posX])
   if (!startAtTheOtherSide) {
     return (
-      <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+      <StyledDiv id={id} animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e) }>
         <Yellow />
       </StyledDiv>
     )
   } else {
     return (
-      <StyledDivReversed animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+      <StyledDivReversed id={id} animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
         <Yellow />
       </StyledDivReversed>
     )
