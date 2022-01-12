@@ -15,7 +15,9 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
 /*   const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
  */  const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y') {
+    console.log("handle movement " + turn)
+    if (turn === 'y' || ! e.isTrusted) {
+      console.log("handle movement" + turn)
       if (currPower !== 0) {
         console.log('position '+x+' power '+currPower)
 
@@ -27,9 +29,6 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
       }
     }
 
-  }
-  const getCurrentPower = () => {
-    return currPower
   }
   const getCurrentPower = () => {
     return currPower
