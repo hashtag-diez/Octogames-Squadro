@@ -3,8 +3,10 @@ import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
+import {Link} from "react-router-dom";
 
-export const Plateau = () => {
+export const Plateau = (Authorized) => {
+
   const [board, setBoard] = useState(
     [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
       ['r', '+', '+', '+', '+', '+', '—'],
@@ -157,7 +159,11 @@ export const Plateau = () => {
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
   }
+  if(Authorized===false){
+    return <Link to="/home"/>;
+  }
   return (
+
     <>
       <h1>
         Rouge : {score[0]}

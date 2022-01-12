@@ -45,7 +45,7 @@ function WelcomeScreen({ player, setPlayer, socket ,room, setRoom }) {
             <div className="welcome-page">
                     <h2>Welcome !</h2>
                     <hr />
-                    {player.name} ?
+                    {player.name}
                         //Create room opt and Join room opt 
                     
                     :
