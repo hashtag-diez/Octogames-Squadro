@@ -28,6 +28,8 @@ let TreeNode = class TreeNode {
         this.idPawn = idPawn;
         this.children = [];
         this.score = 0;
+        this.playerScore = 0; /* pour savoir s'il y a un gagnant */
+        this.botScore = 0;
     }
 }
 
@@ -94,7 +96,23 @@ function deletePawn(node, id, isYellow){
 
 }
 
+function checkWinner(node) {
+    if(node.playerScore == 4){
+        return "HUMAN";
+    }
+    else if(node.botScore == 4){
+        return "BOT";
+    }
+    return null;
+}
+
 function movePawnYellow(node){
+
+    const winner = checkWinner(node);
+    if(winner!= null){
+        console.log(winner, " HAS WON THE GAME !");
+        return;
+    }
     if(node.pion == null){
         console.log("pion est null");
         return;
@@ -128,6 +146,7 @@ function movePawnYellow(node){
     if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, true);
         console.log("pion n° ", node.pion.id, " a fait un aller retour !");
+        this.botScore++;
         node.pion = null;
         return;
     }
@@ -144,6 +163,11 @@ function movePawnYellow(node){
 }
 
 function movePawnRed(node){
+    const winner = checkWinner(node);
+    if(winner!= null){
+        console.log(winner, " HAS WON THE GAME !");
+        return;
+    }
     if(node.pion == null){
         console.log("pion est null");
         return;
@@ -211,12 +235,12 @@ function majRedDeadPawn(node, y, list){
 
 
 function majYellowDeadPawn(node, x, list){
-    let reds = node.yellows;
+    let yellows = node.yellows;
     /* MAJ pions mangés -> retour case départ */
     list.forEach(i =>{
 
         /* retrouver le pion rouge a l'aide de la coordonnée i (x) stockée dans deadPawns */
-        for(let j = 0 ; j < reds.length; j++) {
+        for(let j = 0 ; j < yellows.length; j++) {
             const pion = yellows[j]
             if(pion.x === x && pion.y === i){
                 const power = pion.currentPower;
@@ -272,13 +296,16 @@ function createTree(board, depth, listYellow, listRed){
 
 export default function MinMax(node, depth, maximizingPlayer){
     // listYellow, listRed, currPlateau
-    const listYellow = node.yellows
-    const listRed = node.reds
+    const listYellow = node.yellows;
+    const listRed = node.reds;
     let value;
 
-    if (depth == 0 || node.children.isEmpty()){
-        return Evaluation(node.idPawn, listYellow, listRed,node.currentBoard, node.currentPower);
+    if (depth == 0 || node.children.length==0){
+        let evaluation = Evaluation(node.idPawn, listYellow, listRed, node.currentBoard, node.pion.currentPower);
+        evaluation = (node.pion.isYellow ? evaluation :  - evaluation);
+        return evaluation;
     }
+
     const children = node.children;
 
     if (maximizingPlayer){
@@ -308,15 +335,17 @@ function nextMove(listYellow, listRed, board) {
 
     //minMax + élagage
     nodes.forEach(node => {
-        MinMax(node, depth, true);
+        node.score = MinMax(node, depth, true);
+        console.log(node.score + "\n");
     })
 
-    let idPion = nodes[0].idPawn
-    let highScore = nodes[0].score
+    let idPion = nodes[0].idPawn;
+    let highScore = nodes[0].score;
+
     for(var i = 1; i < nodes.length; i++) {
         if(nodes[i].score > highScore) {
-            idPion = nodes[i].idPawn
-            highScore = nodes[i].score
+            idPion = nodes[i].idPawn;
+            highScore = nodes[i].score;
         }
     }
     return idPion;
