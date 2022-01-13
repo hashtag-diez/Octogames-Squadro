@@ -63,43 +63,15 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
 
   if (!startAtTheOtherSide) {
     return (
-        <PawnWrapper
-            onMouseEnter={() => {
-              console.log('Entré')
-              setHoverDiv(hoverlist(posX,y,currPower))
-              setHover(true)
-            }}
-            onMouseLeave={() => {
-              setHover(false)
-              console.log('Sorti')
-            }}
-        >
-          <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
-            <Yellow />
-          </StyledDiv>
-          {
-              hover &&
-              hoverDiv.map((hover, i) => {
-                if (hover === 2) {
-                  return (
-                      <HoverDivHit key={y + i} i={i} y={y} />
-                  )
-                } else if (hover === 1) {
-                  return (
-                      <HoverDivNormal key={y + i} i={i} y={y} />
-                  )
-                }else {
-                  return (<div />)
-                }
-              })
-          }
-        </PawnWrapper>
+      <StyledDiv turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+        <Yellow />
+      </StyledDiv>
     )
   } else {
     return (
-        <StyledDivReversed animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
-          <Yellow />
-        </StyledDivReversed>
+      <StyledDivReversed turn={turn} animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+        <Yellow />
+      </StyledDivReversed>
     )
   }
 }
@@ -144,6 +116,7 @@ const PawnWrapper = styled.div`
   position: relative;
 `
 const StyledDiv = styled.div`
+  filter: ${({ turn }) => (turn === 'r' ? 'grayscale(100%)' : '')};
   animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;

@@ -4,17 +4,7 @@ import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = () => {
-  window.addEventListener('beforeunload', (ev) =>
-  {
-    ev.preventDefault();
-    alert('Are you sure you want to close?');
-    console.log('Are you sure you want to close?');
-  });
-  window.onhashchange = function() {
-    alert('Are you sure you want to close?');
-    console.log('Are you sure you want to close?');
-  }
+export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   const [board, setBoard] = useState(
       [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
         ['r', '+', '+', '+', '+', '+', '—'],
@@ -44,8 +34,6 @@ export const Plateau = () => {
       ]
   )
 
-  const [score, setScore] = useState([0, 0])
-  const [empty, setEmpty] = useState([0, 0])
   const [turn, setTurn] = useState('y')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
@@ -172,6 +160,7 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
+      if (newScore[0] === 4) setTurn('')
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
@@ -179,7 +168,8 @@ const setYellowHover=(x,y,currPower)=>{
     else currBoard[x][y] = '+'
     updateReds(x, res)
     setBoard(currBoard)
-    setTurn ('y')
+    setTurn('y')
+    // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
   }
@@ -217,6 +207,7 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
+      if (newScore[1] === 4) setTurn('')
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
@@ -231,52 +222,45 @@ const setYellowHover=(x,y,currPower)=>{
     return res
   }
   return (
-    <div>
-      <h1>
-        Rouge : {score[0]}
-        &emsp;
-        Jaune : {score[1]}
-      </h1>
+    <>
       {/*
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      }
-        <div className='board-wrapper'>
-          <Board />
-          <div className='red-row'>
-            {
-              reds.map(red => (
-                  <PionRouge
-                      key={red.id}
-                      x={red.x}
-                      y={red.y}
-                      powerGo={red.powerGo}
-                      powerReturn={red.powerReturn}
-                      handlePlay={handleRedPlay}
-                      turn='r'
-                      hoverlist={setRedHover}
-                  />
-              ))
-            }
-          </div>
-          <div className='yellow-row'>
-            {
-              yellows.map(yellow => (
-                  <PionJaune
-                      key={yellow.id}
-                      x={yellow.x}
-                      y={yellow.y}
-                      powerGo={yellow.powerGo}
-                      powerReturn={yellow.powerReturn}
-                      handlePlay={handleYellowPlay}
-                      turn='y'
-                      hoverlist={setYellowHover}
-                  />
-              ))
-            }
-          </div>
+      */}
+      <div className='board-wrapper'>
+        <Board />
+        <div className='red-row'>
+          {
+            reds.map(red => (
+              <PionRouge
+                key={red.id}
+                x={red.x}
+                y={red.y}
+                powerGo={red.powerGo}
+                powerReturn={red.powerReturn}
+                handlePlay={handleRedPlay}
+                isAgainstBot={isAgainstBot}
+                turn={turn}
+              />
+            ))
+          }
+        </div>
+        <div className='yellow-row'>
+          {
+            yellows.map(yellow => (
+              <PionJaune
+                key={yellow.id}
+                x={yellow.x}
+                y={yellow.y}
+                powerGo={yellow.powerGo}
+                powerReturn={yellow.powerReturn}
+                handlePlay={handleYellowPlay}
+                turn={turn}
+              />
+            ))
+          }
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
