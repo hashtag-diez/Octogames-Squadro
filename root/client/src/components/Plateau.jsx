@@ -18,20 +18,20 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   )
   const [yellows, setYellows] = useState(
     [
-      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1 },
-      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3 },
-      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2 },
-      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3 },
-      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1 }
+      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false },
+      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false }
     ]
   )
   const [reds, setReds] = useState(
     [
-      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 },
-      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
-      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2 },
-      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3 },
-      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1 }
+      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false },
+      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false }
     ]
   )
 
@@ -41,18 +41,18 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
-      const [powerGo, powerReturn, origin, currentPower] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower, newReds[x - 1].hasArrived]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() * 10 + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
+      newReds[x - 1] = { id: Date.now() * 10 + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived: hasArrived }
     })
     setReds(newReds)
   }
   const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
     list.forEach(y => {
-      const [powerGo, powerReturn, origin, currentPower] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower, newYellows[y - 1].hasArrived]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() * 10 + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
+      newYellows[y - 1] = { id: Date.now() * 10 + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived : hasArrived }
     })
     setYellows(newYellows)
   }
@@ -173,6 +173,7 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
+      updateArrived(x, false)
       return 0
     } else {
       console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
@@ -230,6 +231,7 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
+      updateArrived(y, true)
       return 0
     } else  {
       console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
