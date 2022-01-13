@@ -75,14 +75,68 @@ export const Plateau = () => {
     newReds[x - 1].y = y
     setReds(newReds)
   }
-/*const setHover=()=>{
-    const newYellows = [...yellows]
-    newYellows.forEach(x=>{
-      const future=x.x+x.c
-      i
+
+const setYellowHover=(x,y,currPower)=>{
+  const currBoard = [...board]
+  let list=[0,0,0,0,0,0]
+  if(currPower===0){ return list}
+  let future=x+currPower
+  if(future>6){ future=6}
+  else if(future<0){ future=0}
+  let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
     }
-    )
-  }*/
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
+  }
+
+  const setRedHover=(x,y,currPower)=>{
+    const currBoard = [...board]
+    let list=[0,0,0,0,0,0]
+    if(currPower===0){ return list}
+    let future=x+currPower
+    if(future>6){ future=6}
+    else if(future<0){ future=0}
+    let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
+  }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
     // Liste contenant les pions éliminés lors du tour
@@ -130,6 +184,7 @@ export const Plateau = () => {
     return res
   }
   const handleYellowPlay = (x, y, power) => {
+
     const currBoard = [...board]
     const deadPawn = []
     // Etat actuel du pion dans la matrice, en aller ou en retour
@@ -199,7 +254,7 @@ export const Plateau = () => {
                       powerReturn={red.powerReturn}
                       handlePlay={handleRedPlay}
                       turn='r'
-
+                      hoverlist={setRedHover}
                   />
               ))
             }
@@ -215,7 +270,7 @@ export const Plateau = () => {
                       powerReturn={yellow.powerReturn}
                       handlePlay={handleYellowPlay}
                       turn='y'
-                      hoverlist={[0, 1, 1, 1, 1, 1, 0]}
+                      hoverlist={setYellowHover}
                   />
               ))
             }

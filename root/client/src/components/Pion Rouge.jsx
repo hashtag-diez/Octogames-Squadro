@@ -1,14 +1,18 @@
 import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
+import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
+import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist  }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
   const [currPower, setCurrPower] = useState((y === 6 ? powerReturn : powerGo))
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
+  const [hover, setHover] = useState(false)
+  const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'r') {
@@ -51,9 +55,34 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   }, [posY])
   if (!startAtTheOtherSide) {
     return (
-        <>
+        <PawnWrapper
+            onMouseEnter={() => {
+              console.log('Entré')
+              setHoverDiv(hoverlist(x,posY,currPower))
+              setHover(true)
+            }}
+            onMouseLeave={() => {
+              setHover(false)
+              console.log('Sorti')
+            }}>
           <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-        </>
+          {
+              hover &&
+              hoverDiv.map((hover, i) => {
+                if (hover === 2) {
+                  return (
+                      <HoverDivHit key={y + i} i={i} y={y} />
+                  )
+                } else if (hover === 1) {
+                  return (
+                      <HoverDivNormal key={y + i} i={i} y={y} />
+                  )
+                }else {
+                  return (<div />)
+                }
+              })
+          }
+        </PawnWrapper>
     )
   } else {
     return (
@@ -107,6 +136,20 @@ const StyledRed = styled(Red)`
 `
 const StyledRedReversed = styled(StyledRed)`
   animation:  ${spawn('back')} 1.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
+`
+const PawnWrapper = styled.div`
+  position: relative;
+`
+
+const HoverDivNormal = styled(NormalHover)`
+  position: absolute;
+  top: ${({ i }) => `calc(${i}*94px)`};
+  left: -3px;
+`
+const HoverDivHit = styled(HitHover)`
+   position: absolute;
+  top: ${({ i }) => `calc(${i}*94px)`};
+  left: -3px;
 `
 
 export default PionRouge

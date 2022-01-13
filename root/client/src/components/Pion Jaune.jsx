@@ -2,6 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 import { ReactComponent as NormalHover } from '../assets/Hover Normal Jaune.svg'
+import { ReactComponent as HitHover } from '../assets/Hover Hit Jaune.svg'
 
 const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) => {
   const [posX, setPosX] = useState(x)
@@ -11,11 +12,13 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const [hover, setHover] = useState(false)
-  const [hoverDiv, setHoverDiv] = useState(hoverlist) // 0 : rien, 1 : normal, 2 : colission, 3 : final
+  const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'y') {
       if (currPower !== 0) {
+        console.log('position '+x+' power '+currPower)
+
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
@@ -23,6 +26,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
         console.log('%cPion inactif...', 'font-style: italic')
       }
     }
+
   }
   useEffect(() => {
     if (x === 6) {
@@ -45,6 +49,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
           setAnimateSlide(false)
           setAnimateRotate(true)
           setCurrPower(powerReturn)
+
         }, 400) // The duration of the animation defined in the CSS file
         return () => {
           clearTimeout(timer)
@@ -52,11 +57,16 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
       }
     }
   }, [posX])
+  useEffect(()=>{
+    console.log('position '+posX+' power '+currPower);
+      },[posX,currPower])
+
   if (!startAtTheOtherSide) {
     return (
         <PawnWrapper
             onMouseEnter={() => {
               console.log('Entré')
+              setHoverDiv(hoverlist(posX,y,currPower))
               setHover(true)
             }}
             onMouseLeave={() => {
@@ -78,11 +88,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
                   return (
                       <HoverDivNormal key={y + i} i={i} y={y} />
                   )
-                }/*else if (hover === 3) {
-                  return (
-                      <HoverDivFinal key={y + i} i={i} y={y} />
-                  )
-                }*/else {
+                }else {
                   return (<div />)
                 }
               })
@@ -150,7 +156,10 @@ const HoverDivNormal = styled(NormalHover)`
   top: ${({ i }) => `calc(${i}*94px)`};
   left: -3px;
 `
-const HoverDivHit = styled(HoverDivNormal)`
-  background-color: red;
+const HoverDivHit = styled(HitHover)`
+ position: absolute;
+  top: ${({ i }) => `calc(${i}*94px)`};
+  left: -3px;
 `
+
 export default PionJaune
