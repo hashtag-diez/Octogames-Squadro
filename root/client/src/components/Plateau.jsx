@@ -159,6 +159,8 @@ const setYellowHover=(x,y,currPower)=>{
     else currBoard[x][y] = '+'
     // Si un aller-retour complet réalisé, incrémentation du score
     setTurn('y')
+    setBoard(currBoard)
+    updateReds(x, res)
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
@@ -166,12 +168,10 @@ const setYellowHover=(x,y,currPower)=>{
       setScore(newScore)
       if (newScore[0] === 4) setTurn('')
       return 0
+    } else {
+      console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
+      return res
     }
-    updateReds(x, res)
-    setBoard(currBoard)
-    // console.log(board)
-    console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
-    return res
   }
   const handleYellowPlay = (x, y, power) => {
 
@@ -205,7 +205,10 @@ const setYellowHover=(x,y,currPower)=>{
     if (x === 0 || x === 6) currBoard[x][y] = '|'
     else currBoard[x][y] = '+'
     // Si un aller-retour complet réalisé, incrémentation du score
+    setBoard(currBoard)
     setTurn('r')
+    updateYellows(res, y)
+    // console.log(board)
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
@@ -214,14 +217,10 @@ const setYellowHover=(x,y,currPower)=>{
       if (newScore[1] === 4) setTurn('')
       return 0
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    console.log(res)
-    
-    updateYellows(res, y)
-    setBoard(currBoard)
-    // console.log(board)
-    console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
-    return res
+    else{
+      console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
+      return res
+    }
   }
   return (
     <>
