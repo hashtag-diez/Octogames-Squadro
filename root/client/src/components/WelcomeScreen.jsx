@@ -53,6 +53,8 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
                                     {room}
                                     <br/>
                                     <span> Partages ce code avec tes amis ! </span>
+                                    <br/>
+                                    <span> En attente de joueur..</span>
                                     <button onClick={()=>{socket.emit("exitRoom"); setRoom(); setJoinRoom(false); setCreateRoom(false)}}>Exit</button>
                                 </div>   
                             ):
