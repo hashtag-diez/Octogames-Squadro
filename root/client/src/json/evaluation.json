@@ -10,7 +10,7 @@
     },
     "RISQUE" : {
         "PRESENT": 10,
-        "FUTUR": -10
+        "FUTUR": -5
     },
     "MENACE" :  10,
     "STAKING" : -1
