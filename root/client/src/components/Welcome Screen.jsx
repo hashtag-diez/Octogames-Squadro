@@ -41,7 +41,7 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
 
     return (
             <div className="info-pannel">
-                    <h2 style={{letterSpacing : "1px", padding: "8px 0px"}}>Hola!!👋🏻</h2>
+                    <h2 style={{letterSpacing : "1px", padding: "8px 0px"}}>Bienvenue !</h2>
                     <hr />
                     {player.name ? 
                     //Nom d'utilisateur renseigné + option "créer une partie" choisi
