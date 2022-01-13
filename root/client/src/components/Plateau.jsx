@@ -97,6 +97,10 @@ export const Plateau = () => {
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
+    if (y === 0 || y === 6) currBoard[x][y] = '—'
+    else currBoard[x][y] = '+'
+    setBoard(currBoard)
+    setTurn('y')
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
@@ -104,15 +108,10 @@ export const Plateau = () => {
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
       updateReds(1, res, power)
-      setTurn('y')
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
-    if (y === 0 || y === 6) currBoard[x][y] = '—'
-    else currBoard[x][y] = '+'
     updateReds(x, res, power)
-    setBoard(currBoard)
-    setTurn ('y')
     // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
@@ -154,23 +153,22 @@ export const Plateau = () => {
     replaceRedPawn(deadPawn)
     if (res === 6) currBoard[res][y] = 'Y'
     else currBoard[res][y] = state
+    if (x === 0 || x === 6) currBoard[x][y] = '|'
+    else currBoard[x][y] = '+'
+    setBoard(currBoard)
+    setTurn('r')
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
-      setTurn('r')
       updateYellows(1, y, power)
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
     console.log(res)
-    if (x === 0 || x === 6) currBoard[x][y] = '|'
-    else currBoard[x][y] = '+'
     updateYellows(res, y, power)
-    setBoard(currBoard)
-    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
