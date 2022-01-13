@@ -25,7 +25,7 @@ server.listen(PORT);
 
 
 var activeRooms = [];
-var roomIdLength = 4;
+var roomIdLength = 6;
 
 //Creation de l'id d'une salle + vérification de son unicité
 const createID = () => {
@@ -80,13 +80,13 @@ const joinRoom = (socket, room) => {
                 // Joueur 1
                 socket.to(Aroom.id).emit("readyToPlay", {
                                 opponent: Aroom.members[1].username,
-                                yourPosition: true //Pions Rouges
+                                yourPosition: true //Pions du joueur
                             })
 
                 // Joueur 2
                 Aroom.members[1].emit("readyToPlay", {
                                     opponent: Aroom.members[0].username,
-                                    yourPosition: false //Pions Jaunes
+                                    yourPosition: false //Pions de l'adversaire
                                 })
 
                 setTimeout(()=>{
@@ -105,7 +105,30 @@ const joinRoom = (socket, room) => {
     return roomFound;
 }
 
+// exitTheRoom -> Supprime la room crée lorsqu'il n'a plus de joueurs + fait quitter le joueur
+//qui souhaite quitter + envois une notification lorsqu'un joeur quitte la partie
+const exitTheRoom = (socket) => {
 
+    // chercher la socket dans les rooms actives
+    activeRooms.map((room)=>{
+        if(room.members.includes(socket)){
+            socket.leave(room.id)
+            room.members = room.members.filter((member)=> member != socket);
+
+            // notification
+            //on utilise ça lorsque les deux joueurs sont en pleine partie
+            if(room.members.length > 0){
+                room.members[0].emit("opponentLeft")
+                room.members[0].leave(room.id)
+                room.members.pop()
+            }
+        }
+        return room;
+    })
+
+    // Trier les parties sans joueurs
+    activeRooms = activeRooms.filter((room)=>room.members.length > 0)
+}
 
 io.on('connection', (socket) => {
     var newConnexion = socket.handshake.query.token;
@@ -129,17 +152,23 @@ io.on('connection', (socket) => {
             }
         }else{
             socket.emit("resultJoiningRoom",{status: false, text: "Partie inexistante"})
-        }
+        } //chercher ce qui se passe si les deux joueurs se connectent en meme temps 
     })
 
     //Mouvements des pions (à modifier)
-    socket.on("myMove", (posX, posY, room) => {
-        // console.log(posX, posY, room);
-        socket.to(room).emit("opponentMove", posX, posY);
+    //Lorsqu'un pion est déplacé, son numéro est envoyé au serveur, le serveur envoit un message 
+    //au client qui va déplacer ce pion
+    socket.on("pionMove", (numPion, room) => {
+        // console.log(numPion, room);
+        socket.to(room).emit("opponentPionMove", numPion);
+    })
+
+    socket.on("exitRoom", ()=>{
+        exitTheRoom(socket)
     })
 
     socket.on("disconnect",()=>{
         console.log('${socket.username} Disconnected');
     })
-})
 
+})
