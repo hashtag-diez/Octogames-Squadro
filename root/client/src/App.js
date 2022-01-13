@@ -1,10 +1,10 @@
 import './style/App.css'
 // import Plateau from './components/Plateau'
-import Home from './pages/Home'
+import LocalGame from './pages/LocalGame'
 function App () {
   return (
     <div className='App'>
-      <Home />
+      <LocalGame />
     </div>
   )
 }

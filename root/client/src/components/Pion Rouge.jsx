@@ -52,13 +52,13 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   if (!startAtTheOtherSide) {
     return (
       <>
-        <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+        <StyledRed turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
       </>
     )
   } else {
     return (
       <>
-        <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+        <StyledRedReversed turn={turn} animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
       </>
     )
   }
@@ -101,6 +101,7 @@ const rotate = keyframes`
   }
 `
 const StyledRed = styled(Red)`
+  filter: ${({ turn }) => (turn === 'y' ? 'grayscale(100%)' : '')};
   animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;

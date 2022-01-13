@@ -4,7 +4,7 @@ import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = () => {
+export const Plateau = ({ score, setScore, mode }) => {
   const [board, setBoard] = useState(
     [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
       ['r', '+', '+', '+', '+', '+', '—'],
@@ -34,8 +34,7 @@ export const Plateau = () => {
     ]
   )
 
-  const [score, setScore] = useState([0, 0])
-  /* const [turn, setTurn] = useState('y') */
+  const [turn, setTurn] = useState('y')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -99,6 +98,7 @@ export const Plateau = () => {
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
+      if (newScore[0] === 4) setTurn('')
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
@@ -106,7 +106,7 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateReds(x, res)
     setBoard(currBoard)
-    /* setTurn ('y') */
+    setTurn('y')
     // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
@@ -144,6 +144,7 @@ export const Plateau = () => {
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
+      if (newScore[1] === 4) setTurn('')
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
@@ -152,18 +153,13 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateYellows(res, y)
     setBoard(currBoard)
-    // setTurn('r')
+    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
   }
   return (
     <>
-      <h1>
-        Rouge : {score[0]}
-        &emsp;
-        Jaune : {score[1]}
-      </h1>
       {/*
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
       */}
@@ -179,7 +175,7 @@ export const Plateau = () => {
                 powerGo={red.powerGo}
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
-                turn='r'
+                turn={turn}
               />
             ))
           }
@@ -194,7 +190,7 @@ export const Plateau = () => {
                 powerGo={yellow.powerGo}
                 powerReturn={yellow.powerReturn}
                 handlePlay={handleYellowPlay}
-                turn='y'
+                turn={turn}
               />
             ))
           }
