@@ -32,10 +32,10 @@ export default function Evaluation(node, pion, color, listYellow, listRed, currP
 }
 
 function checkWinner(node, isMaxPlayer) {
-    if(node.playerScore == 4 && !isMaxPlayer){
+    if(node.playerScore === 4 && !isMaxPlayer){
         return 30;
     }
-    else if(node.botScore == 4 && isMaxPlayer){
+    else if(node.botScore === 4 && isMaxPlayer){
         return 20;
     }
 }
@@ -55,7 +55,7 @@ function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed)
         if(pionAdverse.length > 0){
         const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].y < y ? true : false); /* le pion adverse ne peut pas me manger */
 
-        if(horsDePortee == false){
+        if(horsDePortee === false){
             return pionAdverse[0].currentPower; /* je risque de me faire manger si je me déplace a cette case*/
         }
         }
@@ -116,7 +116,7 @@ function evalStack(x, y, color, listYellow, listRed){
         });
     }else{
         listRed.forEach(pion => {
-            if(pion.y===y) compt++;
+            if(pion.y === y) compt++;
         });
     }
     return compt;
