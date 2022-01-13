@@ -165,26 +165,19 @@ const setYellowHover=(x,y,currPower)=>{
     // Si le pion a quitté une bordure de sa ligne/colonne
     if (y === 0 || y === 6) currBoard[x][y] = '—'
     else currBoard[x][y] = '+'
-    // Si un aller-retour complet réalisé, incrémentation du score
-    setTurn('y')
     setBoard(currBoard)
-    updateReds(x, res)
+    setTurn('y')
+    updateReds(x, res, power)
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
-      updateReds(1, res, power)
       return 0
-    } else {
+    } else {
       console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
       return res
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    updateReds(x, res, power)
-    // console.log(board)
-    console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
-    return res
   }
   const handleBotPlay = () => {
     let idNextPawn = nextMove([...yellows], [...reds], [...board])
@@ -230,22 +223,18 @@ const setYellowHover=(x,y,currPower)=>{
     // Si un aller-retour complet réalisé, incrémentation du score
     setBoard(currBoard)
     setTurn('r')
-    updateYellows(res, y)
-    // console.log(board)
+    updateYellows(res, y, power)
+    // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
-      updateYellows(1, y, power)
       return 0
+    } else  {
+      console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
+      return res
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    console.log(res)
-    updateYellows(res, y, power)
-    // console.log(board)
-    console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
-    return res
   }
 
   return (
