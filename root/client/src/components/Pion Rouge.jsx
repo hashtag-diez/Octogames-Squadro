@@ -4,7 +4,7 @@ import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
 import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot}) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot, handleBotPlay }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -20,6 +20,9 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot
         const newPosY = handlePlay(x, posY, currPower)
         setDistance(newPosY - posY)
         setPosY(newPosY)
+        if(isAgainstBot) {
+          const timeout = setTimeout(handleBotPlay, 1500)
+        }
       } else {
         console.log('%cPion inactif...', 'font-style: italic')
       }

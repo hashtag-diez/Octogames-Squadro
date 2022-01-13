@@ -7,6 +7,9 @@
 }
 .App h1{
   text-align: center;
+  width: inherit;
+  height: inherit;
+  background-color: #F5F6FC;
 }
 
 .App-logo {
