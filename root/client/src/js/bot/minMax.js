@@ -72,10 +72,10 @@ function deletePawn(node, id, isYellow){
 }
 
 function checkWinner(node) {
-    if(node.playerScore == 4){
+    if(node.playerScore === 4){
         return "HUMAN";
     }
-    else if(node.botScore == 4){
+    else if(node.botScore === 4){
         return "BOT";
     }
     return null;
@@ -102,8 +102,8 @@ function movePawnYellow(node){
     const y = pion.y;
     const currentPower = pion.currentPower;
     let distance = (x + currentPower >= 6 ? 6 - x : (x + currentPower <= 0 ? 0 - x : currentPower));
-
     for(let i = x; (currentPower > 0 ? i < y + distance : i > y + distance);(currentPower > 0 ? i++ : i--)){
+        console.log(i)
         /* si pion adverse présent sur ma ligne */
         if(currentBoard[i][y] === 'r'){
             if(x + distance >= 0 || x + distance <= 6){ /* pour ne pas dépasser du tableau */
@@ -116,13 +116,13 @@ function movePawnYellow(node){
     }
 
     /* déplacement du pion */
-    const arrivee = x + distance; /* coordonnée d'arrivée */
-
+    var arrivee = x + distance; /* coordonnée d'arrivée */
+    if(arrivee <= 0) arrivee = 0
+    if(arrivee >= 6) arrivee = 6
     if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, true);
         console.log("pion n° ", node.pion.id, " a fait un aller retour !");
-        this.botScore++;
-        node.pion = null;
+        node.botScore++;
         return;
     }
     if(pion.currentPower > 0 && arrivee === 6){ /* le pion a fait un aller */
@@ -135,6 +135,8 @@ function movePawnYellow(node){
 
     updateYellows(node, pion.id, pion.x, pion.y, pion.currentPower, pion.aller);
     majRedDeadPawn(node, y, deadPawns)
+    node.pion = pion
+    node.currentBoard = currentBoard
 }
 
 function movePawnRed(node){
@@ -170,12 +172,13 @@ function movePawnRed(node){
     }
 
     /* déplacement du pion */
-    const arrivee = y + distance; /* coordonnée d'arrivée */
+    var arrivee = y + distance; /* coordonnée d'arrivée */
+    if(arrivee <= 0) arrivee = 0
+    if(arrivee >= 6) arrivee = 6
 
     if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, false);
         console.log("pion n° ", node.pion.id, " a fait un aller retour !");
-        node.pion = null;
         node.playerScore++;
         return;
     }
@@ -189,6 +192,8 @@ function movePawnRed(node){
 
     updateReds(node, pion.id, pion.x, pion.y, pion.currentPower, pion.aller);
     majYellowDeadPawn(node, x, deadPawns);
+    node.pion = pion
+    node.currentBoard = currentBoard
 }
 
 function majRedDeadPawn(node, y, list){
@@ -230,7 +235,7 @@ function majYellowDeadPawn(node, x, list){
 const updateYellows = (node, id, x, y, power, aller) => {
     //let yellows = node.yellows;
     node.yellows.forEach(pawn =>{
-        if(pawn.id == id){
+        if(pawn.id === id){
             console.log("pion jaune n° ", id , " updated ");
             pawn.x = x;
             pawn.currentPower = power;
@@ -254,14 +259,20 @@ const updateReds = (node, id, x, y, power, aller) => {
 }
 
 function handleNode(parentNode, depth){
-    if(depth == 0) {
+    if(depth === 0) {
         return;
     }
     const isYellow = parentNode.pion.isYellow;
+    console.log(depth, parentNode)
+    if(isYellow) {
+        movePawnYellow(parentNode)
+    } else {
+        movePawnRed(parentNode)
+    }
     //création des noeuds de la profondeur suivante
     let currentList = (isYellow) ? parentNode.reds : parentNode.yellows;
     currentList.forEach(pion => {
-        const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, !isYellow);
+        const p = new Pion(pion.id % 10, pion.x, pion.y, pion.currentPower, !isYellow);
         let node = new TreeNode(!parentNode.isMaxPlayer, parentNode.currentBoard, p.id, p, parentNode.reds, parentNode.yellows);
         parentNode.children.push(node);
         handleNode(node, depth - 1);
@@ -270,12 +281,10 @@ function handleNode(parentNode, depth){
 
 function createTree(board, depth, listYellow, listRed){
     const root = [];
-    let listYellows = getPawns(listYellow, true);
-    let listReds = getPawns(listRed, false);
 
     listYellow.forEach(pion => {
-        const p = new Pion(pion.id, pion.x, pion.y, pion.currentPower, true);
-        let node = new TreeNode(false, board, p.id, p, listReds, listYellows);
+        const p = new Pion(pion.id % 10, pion.x, pion.y, pion.currentPower, true);
+        let node = new TreeNode(false, board, p.id, p, listRed, listYellow);
         handleNode(node, depth);
         root.push(node);
     })
@@ -284,38 +293,34 @@ function createTree(board, depth, listYellow, listRed){
 
 function MinMax(node, depth, maximizingPlayer, alpha, beta){
     // listYellow, listRed, currPlateau
-    const listYellow = node.yellows;
-    const listRed = node.reds;
     let value;
-    let winner =  checkWinner(node);
-    if (depth == 0 || node.children.length==0 || winner!=null){
-        let evaluation = Evaluation(node, node.pion, listYellow, listRed, node.currentBoard);
+    if (depth === 0 || node.children.length <= 0){
+        let evaluation = Evaluation(node, node.pion);
         evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
+        node.score = evaluation
         return evaluation;
     }
 
     if (maximizingPlayer){
-        value = -Infinity;
-        movePawnYellow(node);   // make move    
+        value = -100000;
         const children = node.children;
-        for(const child in children) {
-            var newValMax = MinMax(child, depth-1, false, listYellow, listRed, alpha, beta);
+        for(let i = 0; i < children.length; i++) {
+            var newValMax = MinMax(children[i], depth-1, false, alpha, beta);
             value = Math.max(value, newValMax);
             alpha = Math.max(alpha, newValMax);
-            console.log("Pion jaune n°" + child.idPawn, value, alpha, beta, newValMax)
+            console.log("Pion jaune n°" + children[i].idPawn, value, alpha, beta, newValMax)
             if(beta <= alpha) break;
         }
         return value;
     }
     else{
-        value = Infinity;
-        movePawnRed(node);
+        value = 100000;
         const children = node.children;
-        for(const child in children) {
-            var newValMin = MinMax(child, depth-1, true, listYellow, listRed, alpha, beta);
+        for(let i = 0; i < children.length; i++) {
+            var newValMin = MinMax(children[i], depth-1, true, alpha, beta);
             value = Math.min(value, newValMin);
             beta = Math.min(beta, newValMin);
-            console.log("Pion rouge n°" + child.id, value, alpha, beta, newValMax)
+            console.log("Pion rouge n°" + children[i].id, value, alpha, beta, newValMin)
             if(beta <= alpha) break;
         }
         return value;
@@ -324,7 +329,7 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
 }
 
 export default function nextMove(listYellow, listRed, board) {
-    const depth = 5
+    const depth = 2
 
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
@@ -333,7 +338,7 @@ export default function nextMove(listYellow, listRed, board) {
 
     //minMax + élagage
     nodes.forEach(node => {
-        node.score = MinMax(node, depth, true, -Infinity, Infinity);
+        node.score = MinMax(node, depth, true, -100000, 100000);
         console.log("node score = " + node.score + "\n");
     })
 
