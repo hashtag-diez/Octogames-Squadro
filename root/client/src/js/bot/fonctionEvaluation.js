@@ -1,15 +1,15 @@
 import PARAMETRES from '../../json/evaluation.json'
 
 //retourne la valeur d'un coup
-export default function Evaluation(node, pion, color, listYellow, listRed, currPlateau){
+export default function Evaluation(node, pion, color){
     const x = pion.x;
-    console.log("X: ",x)
     const y = pion.y;
-    console.log("Y: ",y)
     const aller = pion.aller;
     const currPower = pion.currentPower;
-    console.log("le pouvoir : ", pion.currentPower);
-    const checkWinner = checkWinner(node)
+    const currPlateau = node.currentBoard;
+    const listYellow = node.yellows
+    const listRed = node.reds
+    const checkWinnerConst = checkWinner(node)
     const pawnParameters = {
         id: pion.id,
         AR: (currPower > 0)? 1 : 0,
@@ -20,14 +20,13 @@ export default function Evaluation(node, pion, color, listYellow, listRed, currP
         staking : evalStack(x,y, color, listYellow, listRed),
         distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6,
     }
-    console.log(pawnParameters);
     const allerRetour = (aller === 1) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
     const deplacement = PARAMETRES['DEPLACEMENT'][`${pawnParameters.move}`];
     const risquePresent = pawnParameters.distance * pawnParameters.presentRisk * PARAMETRES["RISQUE"]["PRESENT"];
     const risqueFutur = pawnParameters.distance * pawnParameters.futureRisk * PARAMETRES["RISQUE"]["FUTUR"];
     const menace = pawnParameters.menace * PARAMETRES.MENACE;
     const staking = pawnParameters.staking * PARAMETRES.STAKING;
-    const total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinner;
+    let total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinnerConst;
     return total;
 }
 
@@ -38,6 +37,7 @@ function checkWinner(node, isMaxPlayer) {
     else if(node.botScore === 4 && isMaxPlayer){
         return 20;
     }
+    else return 0
 }
 
 function evalDistance(coordonee, currPower){
@@ -55,18 +55,18 @@ function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed)
         if(pionAdverse.length > 0){
         const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].y < y ? true : false); /* le pion adverse ne peut pas me manger */
 
-        if(horsDePortee === false){
-            return pionAdverse[0].currentPower; /* je risque de me faire manger si je me déplace a cette case*/
-        }
+            if(horsDePortee === false){
+                return pionAdverse[0].currentPower; /* je risque de me faire manger si je me déplace a cette case*/
+            }
         }
     }
     else{
         const pionAdverse = listYellow.filter(pion => pion.y === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
         if(pionAdverse.length > 0){
         const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].x < x ? true : false); /* le pion adverse ne peut pas me manger */
-        if(horsDePortee == true){
-            return pionAdverse[0].currentPower;
-        }
+            if(horsDePortee == true){
+                return pionAdverse[0].currentPower;
+            }
         }
     }
     return 0;
