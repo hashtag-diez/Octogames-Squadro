@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
+const PionJaune = ({id, x, y, powerGo, powerReturn, handlePlay, turn}) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -11,7 +11,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y') {
+    if (turn === 'y' && ! e.isTrusted) {
       if (currPower !== 0) {
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
@@ -51,13 +51,13 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   }, [posX])
   if (!startAtTheOtherSide) {
     return (
-      <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+      <StyledDiv id={id} animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e) }>
         <Yellow />
       </StyledDiv>
     )
   } else {
     return (
-      <StyledDivReversed animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+      <StyledDivReversed id={id} animateSlide={animateSlide} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
         <Yellow />
       </StyledDivReversed>
     )

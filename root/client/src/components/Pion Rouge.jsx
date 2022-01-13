@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot, handleBotPlay }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -16,6 +16,9 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
         const newPosY = handlePlay(x, posY, currPower)
         setDistance(newPosY - posY)
         setPosY(newPosY)
+        if(isAgainstBot) {
+          const timeout = setTimeout(handleBotPlay, 1500)
+        }
       } else {
         console.log('%cPion inactif...', 'font-style: italic')
       }

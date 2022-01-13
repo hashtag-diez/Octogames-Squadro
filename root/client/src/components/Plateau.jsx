@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
+import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
 export const Plateau = () => {
@@ -17,52 +18,64 @@ export const Plateau = () => {
   )
   const [yellows, setYellows] = useState(
     [
-      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false },
+      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false }
     ]
   )
   const [reds, setReds] = useState(
     [
-      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false },
+      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false }
     ]
   )
 
+  const [againstBot, setAgainstBot] = useState(true)
   const [score, setScore] = useState([0, 0])
-  /* const [turn, setTurn] = useState('y') */
+  const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
-      const [powerGo, powerReturn, origin] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0]]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower, newReds[x - 1].hasArrived]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn }
+      newReds[x - 1] = { id: Date.now() * 10 + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived: hasArrived }
     })
     setReds(newReds)
   }
   const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
     list.forEach(y => {
-      const [powerGo, powerReturn, origin] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y]]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower, newYellows[y - 1].hasArrived]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn }
+      newYellows[y - 1] = { id: Date.now() * 10 + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived : hasArrived }
     })
     setYellows(newYellows)
   }
-  const updateYellows = (x, y) => {
+  const updateYellows = (x, y, power) => {
     const newYellows = [...yellows]
     newYellows[y - 1].x = x
+    newYellows[y - 1].currentPower = power
     setYellows(newYellows)
   }
-  const updateReds = (x, y) => {
+  const updateReds = (x, y, power) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
+    newReds[x - 1].currentPower = power
     setReds(newReds)
+  }
+  const updateArrived = (id, isYellow) => {
+    const newPawns = isYellow ? [...yellows] : [...reds]
+    newPawns[id - 1].hasArrived = true
+    if(isYellow) {
+      setYellows(newPawns)
+    } else {
+      setReds(newPawns)
+    }
   }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -93,24 +106,33 @@ export const Plateau = () => {
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
-    // Si un aller-retour complet réalisé, incrémentation du score
+    if (y === 0 || y === 6) currBoard[x][y] = '—'
+    else currBoard[x][y] = '+'
+    setBoard(currBoard)
+    setTurn('y')
+    updateReds(x, res, power)
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
+      updateArrived(x, false)
       return 0
+    } else {
+      console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
+      return res
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    if (y === 0 || y === 6) currBoard[x][y] = '—'
-    else currBoard[x][y] = '+'
-    updateReds(x, res)
-    setBoard(currBoard)
-    /* setTurn ('y') */
-    // console.log(board)
-    console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
-    return res
   }
+  const handleBotPlay = () => {
+    let idNextPawn = nextMove([...yellows], [...reds], [...board])
+    const pawn = yellows[idNextPawn - 1]
+    triggerClick(idNextPawn, 'yellow')
+  }
+  const triggerClick = (i, side) => {
+    const pawn = (side==='red' ? document.querySelector('.red-row').childNodes[i-1] : document.querySelector('.yellow-row').childNodes[i-1])
+    const event = new Event('click', { bubbles : true })
+    pawn.dispatchEvent(event)
+}
   const handleYellowPlay = (x, y, power) => {
     const currBoard = [...board]
     const deadPawn = []
@@ -138,25 +160,25 @@ export const Plateau = () => {
     replaceRedPawn(deadPawn)
     if (res === 6) currBoard[res][y] = 'Y'
     else currBoard[res][y] = state
+    if (x === 0 || x === 6) currBoard[x][y] = '|'
+    else currBoard[x][y] = '+'
+    setBoard(currBoard)
+    setTurn('r')
+    updateYellows(res, y, power)
     // Si un aller-retour complet réalisé, incrémentation du score
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
+      updateArrived(y, true)
       return 0
+    } else  {
+      console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
+      return res
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    console.log(res)
-    if (x === 0 || x === 6) currBoard[x][y] = '|'
-    else currBoard[x][y] = '+'
-    updateYellows(res, y)
-    setBoard(currBoard)
-    // setTurn('r')
-    // console.log(board)
-    console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
-    return res
   }
+
   return (
     <>
       <h1>
@@ -164,9 +186,9 @@ export const Plateau = () => {
         &emsp;
         Jaune : {score[1]}
       </h1>
-      {/*
+      {
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      */}
+      }
       <div className='board-wrapper'>
         <Board />
         <div className='red-row'>
@@ -179,7 +201,9 @@ export const Plateau = () => {
                 powerGo={red.powerGo}
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
-                turn='r'
+                handleBotPlay={handleBotPlay}
+                isAgainstBot={againstBot}
+                turn={turn}
               />
             ))
           }
@@ -188,13 +212,14 @@ export const Plateau = () => {
           {
             yellows.map(yellow => (
               <PionJaune
+                id={"y" + yellow.id}
                 key={yellow.id}
                 x={yellow.x}
                 y={yellow.y}
                 powerGo={yellow.powerGo}
                 powerReturn={yellow.powerReturn}
                 handlePlay={handleYellowPlay}
-                turn='y'
+                turn={turn}
               />
             ))
           }

@@ -1,0 +1,20 @@
+{
+    "A/R":{
+        "ALLER" : 2,
+        "RETOUR" : 1
+    },
+    "DEPLACEMENT": {
+        "1" : 1,
+        "2" : 2,
+        "3" : 3,
+        "-1": 3,
+        "-2": 1,
+        "-3": 2
+    },
+    "RISQUE" : {
+        "PRESENT": 10,
+        "FUTUR": -10
+    },
+    "MENACE" :  100,
+    "STAKING" : -10
+}
