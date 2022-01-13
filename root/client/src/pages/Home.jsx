@@ -14,7 +14,7 @@ import styled from 'styled-components'
 const Home = () => {
   const [multi, setMulti] = useState()
   const [local, setLocal] = useState()
-
+  const [isAgainstBot, setIsAgainstBot] = useState()
   /* if (!multi) {
     // return(Route page BotGame)
   } else if (multi && local) {
@@ -35,12 +35,12 @@ const Home = () => {
             <ButtonsWrapper>
               {!multi ?
                 <>
-                  <Button color='#34495e' onClick={() => setMulti(false)}> <Bot /> Jouer contre <br /> l'ordinateur </Button>
+                  <Button color='#34495e' onClick={() => setLocal(true)}> <Local isAgainstBot={true} /> Jouer contre <br /> l'ordinateur </Button>
                   <Button color='#da8012' onClick={() => setMulti(true)}> <Duel /> Jouer contre <br /> un adversaire </Button>
                 </>
                 :
                 <>
-                  <Button color='#E02016' onClick={() => setLocal(false)}> <Local /> Jeu en local </Button>
+                  <Button color='#E02016' onClick={() => setLocal(true)}> <Local isAgainstBot={false} /> Jeu en local </Button>
                   <Button color='#DAA25D' onClick={() => setLocal(false)}> <Network /> Jeu en réseau </Button>
                   <BackButton color='#34495e9e' onClick={() => setMulti()}><Back /> </BackButton>
                 </>

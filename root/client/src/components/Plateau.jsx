@@ -4,7 +4,7 @@ import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = ({ score, setScore, mode }) => {
+export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   const [board, setBoard] = useState(
     [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
       ['r', '+', '+', '+', '+', '+', '—'],
@@ -175,6 +175,7 @@ export const Plateau = ({ score, setScore, mode }) => {
                 powerGo={red.powerGo}
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
+                isAgainstBot={isAgainstBot}
                 turn={turn}
               />
             ))

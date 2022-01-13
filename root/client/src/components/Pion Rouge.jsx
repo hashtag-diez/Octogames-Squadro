@@ -2,13 +2,14 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot}) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
   const [currPower, setCurrPower] = useState((y === 6 ? powerReturn : powerGo))
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
+
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'r') {
