@@ -19,7 +19,6 @@ export default function Evaluation(node, pion, color, listYellow, listRed, currP
         menace : evalMenace(x, y, color, currPower, currPlateau),
         staking : evalStack(x,y, color, listYellow, listRed),
         distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6,
-        winner : checkWinner
     }
     console.log(pawnParameters);
     const allerRetour = (aller === 1) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
@@ -29,11 +28,7 @@ export default function Evaluation(node, pion, color, listYellow, listRed, currP
     const menace = pawnParameters.menace * PARAMETRES.MENACE;
     const staking = pawnParameters.staking * PARAMETRES.STAKING;
     const total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinner;
-    if (color === "yellow"){
-        return total;
-    }else{
-        return -total;
-    }
+    return total;
 }
 
 function checkWinner(node, isMaxPlayer) {
@@ -43,6 +38,11 @@ function checkWinner(node, isMaxPlayer) {
     else if(node.botScore == 4 && isMaxPlayer){
         return 20;
     }
+}
+
+function evalDistance(coordonee, currPower){
+    const distance = (coordonee + currPower > 6 && currPower > 0 ? 6 : (coordonee + currPower < 0 && currPower < 0 ? 0 :  coordonee + currPower));
+    return distance
 }
 
 function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){

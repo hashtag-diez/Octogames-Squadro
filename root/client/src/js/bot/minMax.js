@@ -289,7 +289,7 @@ function MinMax(node, depth, maximizingPlayer){
     let value;
     let winner =  checkWinner(node);
     if (depth == 0 || node.children.length==0 || winner!=null){
-        let evaluation = Evaluation(node, node.pion, listYellow, listRed, node.currentBoard, node.pion.currentPower);
+        let evaluation = Evaluation(node, node.pion, listYellow, listRed, node.currentBoard);
         evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
         return evaluation;
     }
