@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import logo from '../assets/Logo.png'
+import {Link} from "react-router-dom"
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 import { ReactComponent as Bot } from '../assets/bot.svg'
 import { ReactComponent as Duel } from '../assets/duel.svg'
@@ -13,8 +14,6 @@ import styled from 'styled-components'
 
 const Home = () => {
   const [multi, setMulti] = useState()
-  const [local, setLocal] = useState()
-  const [isAgainstBot, setIsAgainstBot] = useState()
   /* if (!multi) {
     // return(Route page BotGame)
   } else if (multi && local) {
@@ -35,14 +34,14 @@ const Home = () => {
             <ButtonsWrapper>
               {!multi ?
                 <>
-                  <Button color='#34495e' onClick={() => setLocal(true)}> <Local isAgainstBot={true} /> Jouer contre <br /> l'ordinateur </Button>
+                  <StyledLink to="/local_multiplayerGame"> <Button color='#34495e' > <Local /> Jouer contre <br /> l'ordinateur </Button> </StyledLink>
                   <Button color='#da8012' onClick={() => setMulti(true)}> <Duel /> Jouer contre <br /> un adversaire </Button>
                 </>
                 :
                 <>
-                  <Button color='#E02016' onClick={() => setLocal(true)}> <Local isAgainstBot={false} /> Jeu en local </Button>
-                  <Button color='#DAA25D' onClick={() => setLocal(false)}> <Network /> Jeu en réseau </Button>
-                  <BackButton color='#34495e9e' onClick={() => setMulti()}><Back /> </BackButton>
+                  <StyledLink to="/local_multiplayerGame"><Button color='#E02016' > <Local isAgainstBot={false} /> Jeu en local </Button> </StyledLink>
+                  <StyledLink to="/local_multiplayerGame"> <Button color='#DAA25D' > <Network /> Jeu en réseau </Button> </StyledLink>
+                  <BackButton color='#34495e9e' onClick={() => setMulti(false)}><Back /> </BackButton>
                 </>
               }
             </ButtonsWrapper>
@@ -61,6 +60,9 @@ const Home = () => {
 const ButtonsWrapper = styled.div`
   position: relative;
   overflow: visible;
+`
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `
 const BackButton = styled(Button)`
   position: absolute;

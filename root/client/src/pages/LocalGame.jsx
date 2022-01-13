@@ -6,7 +6,7 @@ import { StyledMain, StyledHeader, StyledFooter, Button, StyledSpan } from '../s
 import Plateau from '../components/Plateau'
 
 const LocalGame = (isAgainstBot) => {
-  const [score, setScore] = useState([0, 4])
+  const [score, setScore] = useState([0, 0])
 
   return (
     <>

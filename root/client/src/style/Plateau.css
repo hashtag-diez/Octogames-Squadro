@@ -10,7 +10,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  margin-left:40em;
   z-index: -1;
 }
 .yellow-row{
@@ -24,7 +23,6 @@
 .red-row{
   margin-top: 130px;
   margin-bottom: 75px;
-  margin-left: 40em;
   display: flex;
   flex-direction: column;
   gap: 64px;
