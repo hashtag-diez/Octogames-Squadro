@@ -1,5 +1,4 @@
 import React from 'react'
-import Waiting from "./Waiting";
 
 export const AboutUs = () => {
     return (

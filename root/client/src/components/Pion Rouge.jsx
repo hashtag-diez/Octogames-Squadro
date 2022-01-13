@@ -12,7 +12,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const [hover, setHover] = useState(false)
-  const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
+  //const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'r') {
@@ -55,42 +55,6 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot
   }, [posY])
   if (!startAtTheOtherSide) {
     return (
-<<<<<<< HEAD
-        <PawnWrapper
-            onMouseEnter={() => {
-              console.log('Entré')
-              setHoverDiv(hoverlist(x,posY,currPower))
-              setHover(true)
-            }}
-            onMouseLeave={() => {
-              setHover(false)
-              console.log('Sorti')
-            }}>
-          <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-          {
-              hover &&
-              hoverDiv.map((hover, i) => {
-                if (hover === 2) {
-                  return (
-                      <HoverDivHit key={y + i} i={i} y={y} />
-                  )
-                } else if (hover === 1) {
-                  return (
-                      <HoverDivNormal key={y + i} i={i} y={y} />
-                  )
-                }else {
-                  return (<div />)
-                }
-              })
-          }
-        </PawnWrapper>
-    )
-  } else {
-    return (
-        <>
-          <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-        </>
-=======
       <>
         <StyledRed turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
       </>
@@ -100,7 +64,6 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn , isAgainstBot
       <>
         <StyledRedReversed turn={turn} animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
       </>
->>>>>>> feat/10-construire-menus
     )
   }
 }
