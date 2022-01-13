@@ -1,4 +1,4 @@
-mport React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom }) {
@@ -40,20 +40,57 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
     }, [createRoom])
 
     return (
-            <div className="welcome-page">
-                    <h2>Welcome !</h2>
+            <div className="info-pannel">
+                    <h2 style={{letterSpacing : "1px", padding: "8px 0px"}}>Hola!!👋🏻</h2>
                     <hr />
                     {player.name ? 
-                        //Create room opt and Join room opt 
-                    
+                    //Nom d'utilisateur renseigné + option "créer une partie" choisi
+                        createRoom ?
+                            (
+                                <div className="create-room">
+                                    Code d'accès : 
+                                    <br/>
+                                    {room}
+                                    <br/>
+                                    <span> Partages ce code avec tes amis ! </span>
+                                    <button onClick={()=>{socket.emit("exitRoom"); setRoom(); setJoinRoom(false); setCreateRoom(false)}}>Exit</button>
+                                </div>   
+                            ):
+                            joinRoom ?
+                            //Nom d'utilisateur renseigné + option "rejoindre une partie" choisi
+                                (
+                                    <form className="join-room" onSubmit={handleFormID}>
+                                        Entrez le code :
+                                        <br />
+                                            <input type="text" name="id" id="id" autoComplete="off" 
+                                                autoFocus="true"
+                                                pattern="[0-9]{6}"
+                                                title="Le code doit contenir 6 chiffres"
+                                                value={roomText} onChange={(e)=>setRoomText(e.target.value)}/>
+                                        <br/>
+                                        <i style={{color :"#dd3300", fontSize: "15px"}}>{error}</i>
+                                        <br />
+                                        <button type="submit">Rejoindre</button>
+
+                                        <button onClick={()=>{setRoom(); setJoinRoom(false); setCreateRoom(false); setRoomText(); setError("")}}>Retour</button>
+                                    </form>
+                                ):
+                                
+                                // Cas ou seul le pseudo est renseigné
+                                (<div className="join-create-menu">
+                                    Choisis ton mode de jeu :
+                                    <br />
+                                    <button onClick={() => setCreateRoom(true)}>Crée ta partie !</button>
+                                    <button onClick={() => setJoinRoom(true)}>Rejoins un ami !</button>
+                                </div>)
                     :
-                    // Rentrer le nom d'utilsateur
-                    <form className="player-name" onSubmit={handleFormUsername} >
+                    // Pas encore de nom d'utilisateur, demandez de rentrer un pseudo avant de continuer
+                    <form className="players-name" onSubmit={handleFormUsername} >
                             Enter Your name
                             <br />
                             <input type="text" name="name" id="name" autoComplete="off" autoFocus="true"
                                 pattern="[A-Za-z ]{4,}"
-                                title="Name should contain atleast 4 alphabets"
+                                title="Le nom d'utilisateur doit contenir au moins 4 lettres"
                                 value={name} onChange={(e)=>setName(e.target.value)}/>
                             <br />
                             <button type="submit">Submit</button>
