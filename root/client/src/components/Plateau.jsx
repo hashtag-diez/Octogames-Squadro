@@ -154,7 +154,11 @@ const setYellowHover=(x,y,currPower)=>{
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
+    // Si le pion a quitté une bordure de sa ligne/colonne
+    if (y === 0 || y === 6) currBoard[x][y] = '—'
+    else currBoard[x][y] = '+'
     // Si un aller-retour complet réalisé, incrémentation du score
+    setTurn('y')
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
@@ -163,12 +167,8 @@ const setYellowHover=(x,y,currPower)=>{
       if (newScore[0] === 4) setTurn('')
       return 0
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    if (y === 0 || y === 6) currBoard[x][y] = '—'
-    else currBoard[x][y] = '+'
     updateReds(x, res)
     setBoard(currBoard)
-    setTurn('y')
     // console.log(board)
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
@@ -192,6 +192,7 @@ const setYellowHover=(x,y,currPower)=>{
       // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
       if (i > 0 && i < 6 && currBoard[i][y].toLowerCase() === 'r') {
         distance = (power > 0 ? distance + 1 : distance - 1)
+        console.log('On va regarder la case [',i,',',y,']')
         deadPawn.push(i)
         currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
         currBoard[i][y] = '+'
@@ -201,7 +202,10 @@ const setYellowHover=(x,y,currPower)=>{
     replaceRedPawn(deadPawn)
     if (res === 6) currBoard[res][y] = 'Y'
     else currBoard[res][y] = state
+    if (x === 0 || x === 6) currBoard[x][y] = '|'
+    else currBoard[x][y] = '+'
     // Si un aller-retour complet réalisé, incrémentation du score
+    setTurn('r')
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[1]++
@@ -212,11 +216,9 @@ const setYellowHover=(x,y,currPower)=>{
     }
     // Si le pion a quitté une bordure de sa ligne/colonne
     console.log(res)
-    if (x === 0 || x === 6) currBoard[x][y] = '|'
-    else currBoard[x][y] = '+'
+    
     updateYellows(res, y)
     setBoard(currBoard)
-    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
