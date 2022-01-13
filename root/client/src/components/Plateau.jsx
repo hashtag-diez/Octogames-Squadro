@@ -174,7 +174,8 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
-      if (newScore[0] === 4) setTurn('')
+      updateReds(1, res, power)
+      setTurn('y')
       return 0
     } else {
       console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
@@ -241,7 +242,8 @@ const setYellowHover=(x,y,currPower)=>{
       newScore[1]++
       console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
       setScore(newScore)
-      if (newScore[1] === 4) setTurn('')
+      setTurn('r')
+      updateYellows(1, y, power)
       return 0
     }
     // Si le pion a quitté une bordure de sa ligne/colonne

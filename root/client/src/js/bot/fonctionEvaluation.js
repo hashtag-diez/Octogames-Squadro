@@ -46,7 +46,6 @@ function evalDistance(coordonee, currPower){
 }
 
 function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){
-    //à revoir quand la valeur de currentPower peut être récupérée pour tous les pions
     let coordonee = (color === "yellow" ? x : y); /* coordonnée variant en fonction de si on est rouge ou jaune */
     const next = evalDistance(coordonee, currPower)
 
