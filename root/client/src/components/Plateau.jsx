@@ -5,37 +5,48 @@ import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
 export const Plateau = () => {
+  window.addEventListener('beforeunload', (ev) =>
+  {
+    ev.preventDefault();
+    alert('Are you sure you want to close?');
+    console.log('Are you sure you want to close?');
+  });
+  window.onhashchange = function() {
+    alert('Are you sure you want to close?');
+    console.log('Are you sure you want to close?');
+  }
   const [board, setBoard] = useState(
-    [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['x', '|', '|', '|', '|', '|', 'x']
-    ]
+      [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['x', '|', '|', '|', '|', '|', 'x']
+      ]
   )
   const [yellows, setYellows] = useState(
-    [
-      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
-    ]
+      [
+        { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
+        { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
+        { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
+        { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
+        { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+      ]
   )
   const [reds, setReds] = useState(
-    [
-      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
-    ]
+      [
+        { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
+        { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
+        { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
+        { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
+        { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+      ]
   )
 
   const [score, setScore] = useState([0, 0])
-  /* const [turn, setTurn] = useState('y') */
+  const [empty, setEmpty] = useState([0, 0])
+  const [turn, setTurn] = useState('y')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -63,6 +74,68 @@ export const Plateau = () => {
     const newReds = [...reds]
     newReds[x - 1].y = y
     setReds(newReds)
+  }
+
+const setYellowHover=(x,y,currPower)=>{
+  const currBoard = [...board]
+  let list=[0,0,0,0,0,0]
+  if(currPower===0){ return list}
+  let future=x+currPower
+  if(future>6){ future=6}
+  else if(future<0){ future=0}
+  let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
+  }
+
+  const setRedHover=(x,y,currPower)=>{
+    const currBoard = [...board]
+    let list=[0,0,0,0,0,0]
+    if(currPower===0){ return list}
+    let future=x+currPower
+    if(future>6){ future=6}
+    else if(future<0){ future=0}
+    let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
   }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
@@ -106,12 +179,12 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateReds(x, res)
     setBoard(currBoard)
-    /* setTurn ('y') */
-    // console.log(board)
+    setTurn ('y')
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
   }
   const handleYellowPlay = (x, y, power) => {
+
     const currBoard = [...board]
     const deadPawn = []
     // Etat actuel du pion dans la matrice, en aller ou en retour
@@ -152,7 +225,7 @@ export const Plateau = () => {
     else currBoard[x][y] = '+'
     updateYellows(res, y)
     setBoard(currBoard)
-    // setTurn('r')
+    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
@@ -166,38 +239,41 @@ export const Plateau = () => {
       </h1>
       {/*
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      */}
-      <div className='board-wrapper'>
-        <Board />
-        <div className='red-row'>
-          {
-            reds.map(red => (
-              <PionRouge
-                key={red.id}
-                x={red.x}
-                y={red.y}
-                powerGo={red.powerGo}
-                powerReturn={red.powerReturn}
-                handlePlay={handleRedPlay}
-                turn='r'
-              />
-            ))
-          }
-        </div>
-        <div className='yellow-row'>
-          {
-            yellows.map(yellow => (
-              <PionJaune
-                key={yellow.id}
-                x={yellow.x}
-                y={yellow.y}
-                powerGo={yellow.powerGo}
-                powerReturn={yellow.powerReturn}
-                handlePlay={handleYellowPlay}
-                turn='y'
-              />
-            ))
-          }
+      }
+        <div className='board-wrapper'>
+          <Board />
+          <div className='red-row'>
+            {
+              reds.map(red => (
+                  <PionRouge
+                      key={red.id}
+                      x={red.x}
+                      y={red.y}
+                      powerGo={red.powerGo}
+                      powerReturn={red.powerReturn}
+                      handlePlay={handleRedPlay}
+                      turn='r'
+                      hoverlist={setRedHover}
+                  />
+              ))
+            }
+          </div>
+          <div className='yellow-row'>
+            {
+              yellows.map(yellow => (
+                  <PionJaune
+                      key={yellow.id}
+                      x={yellow.x}
+                      y={yellow.y}
+                      powerGo={yellow.powerGo}
+                      powerReturn={yellow.powerReturn}
+                      handlePlay={handleYellowPlay}
+                      turn='y'
+                      hoverlist={setYellowHover}
+                  />
+              ))
+            }
+          </div>
         </div>
       </div>
     </div>

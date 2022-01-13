@@ -1,0 +1,17 @@
+
+h1{
+    color:black;
+}
+#games{
+    margin-left:10em;
+    margin-top: 5em;
+    display:flex;
+    flex-direction: column;
+
+}
+
+.options{
+    width:20%;
+}
+
+
