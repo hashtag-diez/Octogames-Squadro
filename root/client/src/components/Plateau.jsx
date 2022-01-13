@@ -43,7 +43,7 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
     list.forEach(x => {
       const [powerGo, powerReturn, origin, currentPower] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
+      newReds[x - 1] = { id: Date.now() * 10 + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
     })
     setReds(newReds)
   }
@@ -52,7 +52,7 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
     list.forEach(y => {
       const [powerGo, powerReturn, origin, currentPower] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
+      newYellows[y - 1] = { id: Date.now() * 10 + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower }
     })
     setYellows(newYellows)
   }

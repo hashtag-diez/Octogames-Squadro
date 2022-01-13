@@ -282,7 +282,7 @@ function createTree(board, depth, listYellow, listRed){
     return root;
 }
 
-function MinMax(node, depth, maximizingPlayer){
+function MinMax(node, depth, maximizingPlayer, alpha, beta){
     // listYellow, listRed, currPlateau
     const listYellow = node.yellows;
     const listRed = node.reds;
@@ -296,23 +296,28 @@ function MinMax(node, depth, maximizingPlayer){
 
     if (maximizingPlayer){
         value = -Infinity;
-        movePawnYellow(node);   // make move
-
-        handleNode(node, 1);    //create children nodes (reds)
+        movePawnYellow(node);   // make move    
         const children = node.children;
-        children.forEach(child =>{
-            value = Math.max(value,MinMax(child, depth-1, false, listYellow, listRed));
-        })
+        for(const child in children) {
+            var newValMax = MinMax(child, depth-1, false, listYellow, listRed, alpha, beta);
+            value = Math.max(value, newValMax);
+            alpha = Math.max(alpha, newValMax);
+            console.log("Pion jaune n°" + child.idPawn, value, alpha, beta, newValMax)
+            if(beta <= alpha) break;
+        }
         return value;
     }
     else{
         value = Infinity;
         movePawnRed(node);
-        handleNode(node, 1); 
         const children = node.children;
-        children.forEach(child =>{
-            value = Math.min(value,MinMax(child, depth-1, true, listYellow, listRed));
-        });
+        for(const child in children) {
+            var newValMin = MinMax(child, depth-1, true, listYellow, listRed, alpha, beta);
+            value = Math.min(value, newValMin);
+            beta = Math.min(beta, newValMin);
+            console.log("Pion rouge n°" + child.id, value, alpha, beta, newValMax)
+            if(beta <= alpha) break;
+        }
         return value;
     }
 
@@ -328,7 +333,7 @@ export default function nextMove(listYellow, listRed, board) {
 
     //minMax + élagage
     nodes.forEach(node => {
-        node.score = MinMax(node, depth, true);
+        node.score = MinMax(node, depth, true, -Infinity, Infinity);
         console.log("node score = " + node.score + "\n");
     })
 
