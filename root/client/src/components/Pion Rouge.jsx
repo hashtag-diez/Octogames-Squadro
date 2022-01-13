@@ -51,20 +51,20 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn }) => {
   }, [posY])
   if (!startAtTheOtherSide) {
     return (
-      <>
-        <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-      </>
+        <>
+          <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+        </>
     )
   } else {
     return (
-      <>
-        <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-      </>
+        <>
+          <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+        </>
     )
   }
 }
 const spawn = (direction) =>
-  keyframes`
+    keyframes`
     0%{
       opacity : 0;
       transform: ${(direction === 'back' ? 'translateX(calc(564px)) rotate(180deg)' : 'translateX(calc(0*94px)) rotate(0deg)')}
@@ -75,7 +75,7 @@ const spawn = (direction) =>
     }
   `
 const slideGo = (a, b) =>
-  keyframes`
+    keyframes`
     0%{
       transform: translateX(${a}px);
     }
@@ -84,7 +84,7 @@ const slideGo = (a, b) =>
     }
 `
 const slideReturn = (a, b) =>
-  keyframes`
+    keyframes`
     0%{
       transform: translateX(${a}px) rotate(180deg);
     }

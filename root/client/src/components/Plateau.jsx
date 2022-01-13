@@ -3,41 +3,50 @@ import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
-import {Link} from "react-router-dom";
 
-export const Plateau = (Authorized) => {
-
+export const Plateau = () => {
+  window.addEventListener('beforeunload', (ev) =>
+  {
+    ev.preventDefault();
+    alert('Are you sure you want to close?');
+    console.log('Are you sure you want to close?');
+  });
+  window.onhashchange = function() {
+    alert('Are you sure you want to close?');
+    console.log('Are you sure you want to close?');
+  }
   const [board, setBoard] = useState(
-    [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['x', '|', '|', '|', '|', '|', 'x']
-    ]
+      [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['x', '|', '|', '|', '|', '|', 'x']
+      ]
   )
   const [yellows, setYellows] = useState(
-    [
-      { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-      { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-      { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-      { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
-    ]
+      [
+        { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
+        { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
+        { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
+        { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
+        { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+      ]
   )
   const [reds, setReds] = useState(
-    [
-      { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-      { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-      { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-      { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
-    ]
+      [
+        { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
+        { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
+        { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
+        { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
+        { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+      ]
   )
 
   const [score, setScore] = useState([0, 0])
-  /* const [turn, setTurn] = useState('y') */
+  const [empty, setEmpty] = useState([0, 0])
+  const [turn, setTurn] = useState('y')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -66,6 +75,14 @@ export const Plateau = (Authorized) => {
     newReds[x - 1].y = y
     setReds(newReds)
   }
+/*const setHover=()=>{
+    const newYellows = [...yellows]
+    newYellows.forEach(x=>{
+      const future=x.x+x.c
+      i
+    }
+    )
+  }*/
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
     // Liste contenant les pions éliminés lors du tour
@@ -108,8 +125,7 @@ export const Plateau = (Authorized) => {
     else currBoard[x][y] = '+'
     updateReds(x, res)
     setBoard(currBoard)
-    /* setTurn ('y') */
-    // console.log(board)
+    setTurn ('y')
     console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
     return res
   }
@@ -154,59 +170,58 @@ export const Plateau = (Authorized) => {
     else currBoard[x][y] = '+'
     updateYellows(res, y)
     setBoard(currBoard)
-    // setTurn('r')
+    setTurn('r')
     // console.log(board)
     console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
     return res
   }
-  if(Authorized===false){
-    return <Link to="/home"/>;
-  }
   return (
 
-    <>
-      <h1>
-        Rouge : {score[0]}
-        &emsp;
-        Jaune : {score[1]}
-      </h1>
-      {/*
+      <>
+        <h1>
+          Rouge : {score[0]}
+          &emsp;
+          Jaune : {score[1]}
+        </h1>
+        {
         (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      */}
-      <div className='board-wrapper'>
-        <Board />
-        <div className='red-row'>
-          {
-            reds.map(red => (
-              <PionRouge
-                key={red.id}
-                x={red.x}
-                y={red.y}
-                powerGo={red.powerGo}
-                powerReturn={red.powerReturn}
-                handlePlay={handleRedPlay}
-                turn='r'
-              />
-            ))
-          }
+      }
+        <div className='board-wrapper'>
+          <Board />
+          <div className='red-row'>
+            {
+              reds.map(red => (
+                  <PionRouge
+                      key={red.id}
+                      x={red.x}
+                      y={red.y}
+                      powerGo={red.powerGo}
+                      powerReturn={red.powerReturn}
+                      handlePlay={handleRedPlay}
+                      turn='r'
+
+                  />
+              ))
+            }
+          </div>
+          <div className='yellow-row'>
+            {
+              yellows.map(yellow => (
+                  <PionJaune
+                      key={yellow.id}
+                      x={yellow.x}
+                      y={yellow.y}
+                      powerGo={yellow.powerGo}
+                      powerReturn={yellow.powerReturn}
+                      handlePlay={handleYellowPlay}
+                      turn='y'
+                      hoverlist={[0, 1, 1, 1, 1, 1, 0]}
+                  />
+              ))
+            }
+          </div>
         </div>
-        <div className='yellow-row'>
-          {
-            yellows.map(yellow => (
-              <PionJaune
-                key={yellow.id}
-                x={yellow.x}
-                y={yellow.y}
-                powerGo={yellow.powerGo}
-                powerReturn={yellow.powerReturn}
-                handlePlay={handleYellowPlay}
-                turn='y'
-              />
-            ))
-          }
-        </div>
-      </div>
-    </>
+      </>
   )
 }
 

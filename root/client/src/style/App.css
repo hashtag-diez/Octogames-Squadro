@@ -1,7 +1,4 @@
 .App {
-  display: grid;
-  place-items: center;
-  text-align: center;
   width: inherit;
   height: inherit;
   background-color: #F5F6FC;
@@ -40,34 +37,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-#squadro{
-  width:20%;
-  margin-left: 25%;
-  margin-top: 2%;
-  border-radius: 5%;
-}
-
-
-#HomeButton{
-  margin-left: 10%;
-
-}
-
-img{
-  width:25px;
-}
-
-#head{
-  height:20%
-}
-#content{
-  height:100px
-}
-
-#octogames{
-  width:7%;
-  margin-top: 40%;
-  margin-left: 90%;
 }
