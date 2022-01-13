@@ -284,10 +284,14 @@ function createTree(board, depth, listYellow, listRed){
     const root = [];
 
     listYellow.forEach(pion => {
-        const p = new Pion(pion.id % 10, pion.x, pion.y, pion.currentPower, true);
-        let node = new TreeNode(false, board, p.id, p, listRed, listYellow);
-        handleNode(node, depth);
-        root.push(node);
+        if(pion.x === 0 && pion.currentPower < 0) {
+            console.log(pion.currentPower, pion.x)
+        } else {
+            const p = new Pion(pion.id % 10, pion.x, pion.y, pion.currentPower, true);
+            let node = new TreeNode(false, board, p.id, p, listRed, listYellow);
+            handleNode(node, depth);
+            root.push(node);
+        }
     })
     return root;
 }
