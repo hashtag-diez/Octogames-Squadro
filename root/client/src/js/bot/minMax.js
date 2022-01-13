@@ -111,6 +111,7 @@ function movePawnYellow(node){
                 distance = (currentPower > 0 ? distance + 1 : distance - 1);
             }
             deadPawns.push(i);
+            console.log(i, " pushed");
             currentBoard[i][y] = "+"; /* libération de la case*/
         }
     }
@@ -121,6 +122,7 @@ function movePawnYellow(node){
     if(arrivee >= 6) arrivee = 6
     if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, true);
+        console.log("pion n° ", node.pion.id, " a fait un aller retour !");
         node.botScore++;
         return;
     }
@@ -157,11 +159,9 @@ function movePawnRed(node){
     const x = pion.x;
     const y = pion.y;
     const currentPower = pion.currentPower;
-    let distance = (y + currentPower >= 6 ? 6 - y : (y + currentPower <= 0 ? 0 - y : currentPower));
+    let distance = (x + currentPower >= 6 ? 6 - x : (x + currentPower <= 0 ? 0 - x : currentPower));
 
     for(let i = y; (currentPower > 0 ? i < y + distance : i > y + distance);(currentPower > 0 ? i++ : i--)){
-        if(i<0) break
-        if(i>6) break
         /* si pion adverse présent sur ma ligne */
         if(currentBoard[x][i] === 'y'){
             if(x + distance >= 0 || x + distance <= 6){ /* pour ne pas dépasser du tableau */
@@ -179,6 +179,7 @@ function movePawnRed(node){
 
     if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, false);
+        console.log("pion n° ", node.pion.id, " a fait un aller retour !");
         node.playerScore++;
         return;
     }
@@ -236,6 +237,7 @@ const updateYellows = (node, id, x, y, power, aller) => {
     //let yellows = node.yellows;
     node.yellows.forEach(pawn =>{
         if(pawn.id === id){
+            console.log("pion jaune n° ", id , " updated ");
             pawn.x = x;
             pawn.currentPower = power;
             pawn.aller = aller;
@@ -248,6 +250,7 @@ const updateReds = (node, id, x, y, power, aller) => {
 
     node.reds.forEach(pawn =>{
         if(pawn.id == id){
+            console.log("pion rouge  n° ", id , " updated ");
             pawn.y = y ;
             pawn.currentPower = power;
             pawn.aller = aller;
@@ -261,6 +264,7 @@ function handleNode(parentNode, depth){
         return;
     }
     const isYellow = parentNode.pion.isYellow;
+    console.log(depth, parentNode)
     if(isYellow) {
         movePawnYellow(parentNode)
     } else {
@@ -292,7 +296,9 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
     // listYellow, listRed, currPlateau
     let value;
     if (depth === 0 || node.children.length <= 0){
-        let evaluation = Evaluation(node, node.pion);
+        let color = (maximizingPlayer ? "yellow" : "red");
+        let evaluation = Evaluation(node, node.pion, color);
+        // evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
         node.score = evaluation
         return evaluation;
     }
@@ -304,6 +310,7 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
             var newValMax = MinMax(children[i], depth-1, false, alpha, beta);
             value = Math.max(value, newValMax);
             alpha = Math.max(alpha, newValMax);
+            console.log("Pion jaune n°" + children[i].idPawn, value, alpha, beta, newValMax)
             if(beta <= alpha) break;
         }
         return value;
@@ -315,6 +322,7 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
             var newValMin = MinMax(children[i], depth-1, true, alpha, beta);
             value = Math.min(value, newValMin);
             beta = Math.min(beta, newValMin);
+            console.log("Pion rouge n°" + children[i].id, value, alpha, beta, newValMin)
             if(beta <= alpha) break;
         }
         return value;
@@ -322,22 +330,9 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
 
 }
 
-function initList(list, isRed) {
-    let res = []
-    list.forEach( pion => {
-        const position = (isRed) ? pion.y : pion.x
-        if(!(pion.currentPower < 0) || !(position === 0)) {
-            res.push(pion)
-        }
-    })
-    return res
-}
+export default function nextMove(listYellow, listRed, board) {
+    const depth = 2
 
-export default function nextMove(listY, listR, board) {
-    const depth = 4
-
-    let listRed = initList(listR, true)
-    let listYellow = initList(listY, false)
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
     //définir depth en fonction de la précision nécessaire

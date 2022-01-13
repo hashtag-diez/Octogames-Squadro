@@ -26,15 +26,15 @@ export default function Evaluation(node, pion, color){
     const risqueFutur = pawnParameters.distance * pawnParameters.futureRisk * PARAMETRES["RISQUE"]["FUTUR"];
     const menace = pawnParameters.menace * PARAMETRES.MENACE;
     const staking = pawnParameters.staking * PARAMETRES.STAKING;
-    let total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinnerConst;
+    const total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinnerConst;
     return total;
 }
 
-function checkWinner(node, isMaxPlayer) {
-    if(node.playerScore === 4 && !isMaxPlayer){
+function checkWinner(node) {
+    if(node.playerScore === 4){
         return 30;
     }
-    else if(node.botScore === 4 && isMaxPlayer){
+    else if(node.botScore === 4){
         return 20;
     }
     else return 0
@@ -52,7 +52,7 @@ function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed)
     if(color === "yellow"){
         const pionAdverse = listRed.filter(pion => pion.x === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
         if(pionAdverse.length > 0){
-        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].y < y ? true : false); /* le pion adverse ne peut pas me manger */
+        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].y < y); /* le pion adverse ne peut pas me manger */
 
             if(horsDePortee === false){
                 return pionAdverse[0].currentPower; /* je risque de me faire manger si je me déplace a cette case*/
@@ -62,8 +62,8 @@ function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed)
     else{
         const pionAdverse = listYellow.filter(pion => pion.y === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
         if(pionAdverse.length > 0){
-        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].x < x ? true : false); /* le pion adverse ne peut pas me manger */
-            if(horsDePortee == true){
+        const horsDePortee = (pionAdverse[0].currentPower < 0 && pionAdverse[0].x < x); /* le pion adverse ne peut pas me manger */
+            if(horsDePortee){
                 return pionAdverse[0].currentPower;
             }
         }
@@ -86,7 +86,7 @@ function evalPresentRisk(x, y, color, currPower, currPlateau, listYellow, listRe
         }
     }
     if(pionNonProteges > 0){
-        return 5; /* je risque de me faire manger au prochain tour il faut que je déplace le pion (+BOT -PLAYER)*/
+        return 10; /* je risque de me faire manger au prochain tour il faut que je déplace le pion (+BOT -PLAYER)*/
     }else{
         return 0 ;  /* l'adversaire ne me menace pas*/
     }
@@ -98,8 +98,8 @@ function evalMenace(x, y, color, currPower, currPlateau){
     let coordonee = (color === "yellow" ? x : y); /* coordonnée variant en fonction de si on est rouge ou jaune */
     const distance = (coordonee + currPower > 6 && currPower > 0 ? 6 : (coordonee + currPower < 0 && currPower < 0 ? 0 :  coordonee + currPower));
 
-    for(let i = coordonee; i <= distance ; (currPower > 0 ? i++ : i--)){
-        if ((color === 'yellow' && currPlateau[i][y] === 'r') || (color === 'red' && currPlateau[x][i] === 'y') ) {
+    for(let i = coordonee; i < distance ; (currPower > 0 ? i++ : i--)){
+        if ((color === "yellow" && currPlateau[i][y] === 'r') || (color === "red" && currPlateau[x][i] === 'y') ) {
             total+=1;
         }
     }
