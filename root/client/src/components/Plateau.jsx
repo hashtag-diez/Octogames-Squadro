@@ -36,7 +36,6 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
   )
 
   const [againstBot, setAgainstBot] = useState(true)
-  const [score, setScore] = useState([0, 0])
   const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
@@ -67,6 +66,15 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
     newReds[x - 1].y = y
     newReds[x - 1].currentPower = power
     setReds(newReds)
+  }
+  const updateArrived = (id, isYellow) => {
+    const newPawns = isYellow ? [...yellows] : [...reds]
+    newPawns[id - 1].hasArrived = true
+    if(isYellow) {
+      setYellows(newPawns)
+    } else {
+      setReds(newPawns)
+    }
   }
 
 const setYellowHover=(x,y,currPower)=>{
