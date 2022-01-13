@@ -1,6 +1,6 @@
 {
     "A/R":{
-        "ALLER" : 1,
+        "ALLER" : 2,
         "RETOUR" : 1
     },
     "DEPLACEMENT": {
@@ -15,6 +15,6 @@
         "PRESENT": 10,
         "FUTUR": -10
     },
-    "MENACE" :  10,
-    "STAKING" : -1
+    "MENACE" :  100,
+    "STAKING" : -10
 }

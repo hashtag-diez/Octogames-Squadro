@@ -11,7 +11,7 @@ const PionJaune = ({id, x, y, powerGo, powerReturn, handlePlay, turn}) => {
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y' || ! e.isTrusted) {
+    if (turn === 'y' && ! e.isTrusted) {
       if (currPower !== 0) {
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
