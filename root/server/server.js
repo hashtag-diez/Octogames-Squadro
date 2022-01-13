@@ -3,6 +3,7 @@ const express = require('express');
 const socket = require('socket.io');
 const path = require('path');
 const http = require('http');
+const { v4: uuidv4 } = require('uuid')
 const PORT = process.env.PORT || 5000
 const app = express();
 const server = http.createServer(app);
@@ -29,15 +30,7 @@ var roomIdLength = 4;
 
 //Creation de l'id d'une salle + vérification de son unicité
 const createID = () => {
-	do {
-		var i = 0;
-		var roomId = 0;
-		while (i < roomIdLength) {
-			roomId = (roomId*10) + Math.random()%10 ;
-			i++;
-		}
-	} while (checkIfIdExists(roomId));
-	return roomId.toString();
+	return uuidv4().slice(0, 10)
 }
 
 const checkIfIdExists = (roomId) => {
@@ -105,41 +98,45 @@ const joinRoom = (socket, room) => {
     return roomFound;
 }
 
-
-
 io.on('connection', (socket) => {
     var newConnexion = socket.handshake.query.token;
-    socket.username = newConnexion;
-    console.log("${newConnexion} joined");
+    socket.username = newConnexion
+    console.log(`${newConnexion} joined`)
 
     //Si pas de salle -> retourne l'id de la salle + add le joueur
     socket.on("getRoomId",()=>{
         var roomId = createID();
         joinRoom(socket, roomId);
+        socket.room = roomId
         socket.emit("sendRoomId", roomId);
     })
 
     // Si <2 joueurs dans la salle mais que la salle existe
     socket.on("tryToJoin", (roomId)=>{
-        if(checkRoomExist(roomId)){
-            if(joinRoom(socket, roomId)){
+        if (activeRooms.filter(room => room.id === roomId).length > 0) {
+            if (joinRoom(socket, roomId)) {
                 socket.emit("resultJoiningRoom",{status: true, text: "Bienvenue !"})
-            }else{
+                socket.to(roomId).emit("joinGame", socket.username)
+                socket.room = roomId
+            } else {
                 socket.emit("resultJoiningRoom",{status: false, text: "Partie pleine"})
             }
-        }else{
+        } else {
             socket.emit("resultJoiningRoom",{status: false, text: "Partie inexistante"})
         }
     })
 
     //Mouvements des pions (à modifier)
-    socket.on("myMove", (posX, posY, room) => {
+    socket.on("myMove", (side, pawn, room) => {
         // console.log(posX, posY, room);
-        socket.to(room).emit("opponentMove", posX, posY);
+        socket.to(room).emit('opponentMove', { side: side, pawn: pawn });
     })
 
     socket.on("disconnect",()=>{
-        console.log('${socket.username} Disconnected');
+        if (socket.room) {
+            console.log("On envoie à l'opposant")
+            socket.to(socket.room).emit('disconnect', socket.username);
+        }
+        console.log(`${socket.username} disconnected`);
     })
 })
-
