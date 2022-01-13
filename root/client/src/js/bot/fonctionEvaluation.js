@@ -1,7 +1,7 @@
 import PARAMETRES from '../../json/evaluation.json'
 
 //retourne la valeur d'un coup
-export default function Evaluation(pion, color, listYellow, listRed, currPlateau){
+export default function Evaluation(node, pion, color, listYellow, listRed, currPlateau){
     const x = pion.x;
     console.log("X: ",x)
     const y = pion.y;
@@ -9,6 +9,7 @@ export default function Evaluation(pion, color, listYellow, listRed, currPlateau
     const aller = pion.aller;
     const currPower = pion.currentPower;
     console.log("le pouvoir : ", pion.currentPower);
+    const checkWinner = checkWinner(node)
     const pawnParameters = {
         id: pion.id,
         AR: (currPower > 0)? 1 : 0,
@@ -17,7 +18,8 @@ export default function Evaluation(pion, color, listYellow, listRed, currPlateau
         futureRisk : evalFutureRisk(x, y, color, currPower, currPlateau, listYellow, listRed),
         menace : evalMenace(x, y, color, currPower, currPlateau),
         staking : evalStack(x,y, color, listYellow, listRed),
-        distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6
+        distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6,
+        winner : checkWinner
     }
     console.log(pawnParameters);
     const allerRetour = (aller === 1) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
@@ -26,7 +28,7 @@ export default function Evaluation(pion, color, listYellow, listRed, currPlateau
     const risqueFutur = pawnParameters.distance * pawnParameters.futureRisk * PARAMETRES["RISQUE"]["FUTUR"];
     const menace = pawnParameters.menace * PARAMETRES.MENACE;
     const staking = pawnParameters.staking * PARAMETRES.STAKING;
-    const total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking;
+    const total = allerRetour + deplacement + risquePresent + risqueFutur + menace + staking + checkWinner;
     if (color === "yellow"){
         return total;
     }else{
@@ -34,6 +36,14 @@ export default function Evaluation(pion, color, listYellow, listRed, currPlateau
     }
 }
 
+function checkWinner(node, isMaxPlayer) {
+    if(node.playerScore == 4 && !isMaxPlayer){
+        return 30;
+    }
+    else if(node.botScore == 4 && isMaxPlayer){
+        return 20;
+    }
+}
 
 function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){
     //à revoir quand la valeur de currentPower peut être récupérée pour tous les pions

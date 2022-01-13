@@ -258,14 +258,6 @@ function handleNode(parentNode, depth){
         return;
     }
     const isYellow = parentNode.pion.isYellow;
-
-    //simulation du mouvement ---> SIMULATION DU MOUVEMENT DANS L'ALGO MIN MAX
-    // if(isYellow) {
-    //     movePawnYellow(parentNode);
-    // } else {
-    //     movePawnRed(parentNode);
-    // }
-
     //création des noeuds de la profondeur suivante
     let currentList = (isYellow) ? parentNode.reds : parentNode.yellows;
     currentList.forEach(pion => {
@@ -290,28 +282,22 @@ function createTree(board, depth, listYellow, listRed){
     return root;
 }
 
-export default function MinMax(node, depth, maximizingPlayer){
+function MinMax(node, depth, maximizingPlayer){
     // listYellow, listRed, currPlateau
     const listYellow = node.yellows;
     const listRed = node.reds;
     let value;
-    const winner = checkWinner(node);
-
-    if(winner != null){
-        return ;
-    }
-
-    if (depth == 0 || node.children.length==0){
-        let evaluation = Evaluation(node.pion, listYellow, listRed, node.currentBoard, node.pion.currentPower);
-        evaluation = (isMaxPlayer? evaluation :  - evaluation);
+    let winner =  checkWinner(node);
+    if (depth == 0 || node.children.length==0 || winner!=null){
+        let evaluation = Evaluation(node, node.pion, listYellow, listRed, node.currentBoard, node.pion.currentPower);
+        evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
         return evaluation;
     }
 
     if (maximizingPlayer){
         value = -Infinity;
-
         movePawnYellow(node);   // make move
-    
+
         handleNode(node, 1);    //create children nodes (reds)
         const children = node.children;
         children.forEach(child =>{
@@ -332,7 +318,7 @@ export default function MinMax(node, depth, maximizingPlayer){
 
 }
 
-function nextMove(listYellow, listRed, board) {
+export default function nextMove(listYellow, listRed, board) {
     const depth = 5
 
     //dans le front appeller nextMove([...yellow], [...red], [...board])
@@ -349,7 +335,7 @@ function nextMove(listYellow, listRed, board) {
     let idPion = nodes[0].idPawn;
     let highScore = nodes[0].score;
 
-    for(var i = 1; i < nodes.length; i++) {
+    for(let i = 1; i < nodes.length; i++) {
         if(nodes[i].score > highScore) {
             idPion = nodes[i].idPawn;
             highScore = nodes[i].score;
