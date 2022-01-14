@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "client": "cd ../client && npm start",
-    "build": "node server.js"
+    "client": "cd ../client && npm start"
   },
   "keywords": [],
   "author": "",
