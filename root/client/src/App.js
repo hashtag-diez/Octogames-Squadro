@@ -3,7 +3,6 @@ import {BrowserRouter as Router,Routes,Route} from "react-router-dom";
 import Home from "./pages/Home"
 import MultiplayerGame from "./pages/MultiplayerGame"
 import AboutUs from "./pages/AboutUs"
-import BotGame from './pages/BotGame'
 import LocalGame from './pages/LocalGame'
 
 function App () {

@@ -36,14 +36,7 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
   )
   
   const [turn, setTurn] = useState('r')
-  useEffect(() => {
-    if(socket){
-      socket.on('opponentMove', ({ side, pawn }) => {
-          console.log("L'ennemi a reçu un message de "+side+" pour l'indice "+pawn)
-          triggerClick(pawn, side)
-      })
-  }
-  }, [])
+
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -148,7 +141,6 @@ const setYellowHover=(x,y,currPower)=>{
   const handleRedPlay = (isTrusted, x, y, power) => {
     if(isOnline && isTrusted){
       console.log('emission !!!!')
-      console.log(socket.rooms)
       socket.emit("myMove", "red", x, room)
     }
     const currBoard = [...board]
@@ -209,7 +201,7 @@ const setYellowHover=(x,y,currPower)=>{
     const pawn = (side==='red' ? document.querySelector('.red-row').childNodes[i-1] : document.querySelector('.yellow-row').childNodes[i-1])
     const event = new Event('click', { bubbles : true })
     pawn.dispatchEvent(event)
-}
+  } 
   const handleYellowPlay = (isTrusted, x, y, power) => {
     if(isOnline && isTrusted){
       socket.emit("myMove","yellow", y, room)

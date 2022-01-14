@@ -171,7 +171,10 @@ io.on('connection', (socket) => {
         console.log("Le server a reçu un messaage de "+side+" pour l'indice "+pawn)
         socket.to(room).emit('opponentMove', { side: side, pawn: pawn });
     })
-
+    socket.on("resetGame", (room) => {
+        console.log("On recommence")
+        socket.to(room).emit('resetGame');
+    })
     socket.on("exitRoom", ()=>{
         exitTheRoom(socket)
     })

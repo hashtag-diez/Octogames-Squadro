@@ -7,14 +7,19 @@ import Plateau from '../components/Plateau'
 
 const LocalGame = ({ isAgainstBot }) => {
   const [score, setScore] = useState([0, 0])
-
+  const [key, setKey] = useState(Date.now())
+  const handleReset = e => {
+    e.preventDefault()
+    setScore([0, 0])
+    setKey(Date.now())
+  }
   return (
     <>
       <StyledHeader>
         <img src={logo} alt='logo' />
       </StyledHeader>
       <StyledMain>
-        <Plateau score={score} setScore={setScore} isAgainstBot={isAgainstBot} />
+        <Plateau key={key} score={score} setScore={setScore} isAgainstBot={isAgainstBot} />
         <aside>
           {
             score[0] === 4 || score[1] === 4
@@ -32,7 +37,7 @@ const LocalGame = ({ isAgainstBot }) => {
           <Rules />
           {
             score[0] === 4 || score[1] === 4 ?
-              <Button color="#da8012"> <Retry />Recommencer</Button>
+              <Button color="#da8012" onClick={(e) => handleReset(e)}> <Retry />Recommencer</Button>
               : ''
           }
         </aside>
