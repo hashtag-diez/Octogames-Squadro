@@ -305,22 +305,26 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
         value = -100000;
         const children = node.children;
         for(let i = 0; i < children.length; i++) {
-            var newValMax = MinMax(children[i], depth-1, false, alpha, beta);
+            MinMax(children[i], depth-1, false, alpha, beta);
+            var newValMax = children[i].score
             value = Math.max(value, newValMax);
             alpha = Math.max(alpha, newValMax);
             if(beta <= alpha) break;
         }
+        node.score = value
         return value;
     }
     else{
         value = 100000;
         const children = node.children;
         for(let i = 0; i < children.length; i++) {
-            var newValMin = MinMax(children[i], depth-1, true, alpha, beta);
+            MinMax(children[i], depth-1, true, alpha, beta);
+            var newValMin = children[i].score
             value = Math.min(value, newValMin);
             beta = Math.min(beta, newValMin);
             if(beta <= alpha) break;
         }
+        node.score = value
         return value;
     }
 
@@ -336,8 +340,7 @@ export default function nextMove(listYellow, listRed, board) {
 
     //minMax + élagage
     nodes.forEach(node => {
-        node.score = MinMax(node, depth, true, -100000, 100000);
-        console.log("node score = " + node.score + "\n");
+        MinMax(node, depth, true, -100000, 100000);
     })
 
     let idPion = nodes[0].idPawn;
