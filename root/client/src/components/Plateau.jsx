@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
 import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = ({ score, setScore, isAgainstBot }) => {
+export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, host, player, isOnline }) => {
   const [board, setBoard] = useState(
       [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
         ['r', '+', '+', '+', '+', '+', '—'],
@@ -34,8 +34,16 @@ export const Plateau = ({ score, setScore, isAgainstBot }) => {
       { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false }
     ]
   )
-
+  
   const [turn, setTurn] = useState('r')
+  useEffect(() => {
+    if(socket){
+      socket.on('opponentMove', ({ side, pawn }) => {
+          console.log("L'ennemi a reçu un message de "+side+" pour l'indice "+pawn)
+          triggerClick(pawn, side)
+      })
+  }
+  }, [])
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -137,7 +145,12 @@ const setYellowHover=(x,y,currPower)=>{
     }
     return list
   }
-  const handleRedPlay = (x, y, power) => {
+  const handleRedPlay = (isTrusted, x, y, power) => {
+    if(isOnline && isTrusted){
+      console.log('emission !!!!')
+      console.log(socket.rooms)
+      socket.emit("myMove", "red", x, room)
+    }
     const currBoard = [...board]
     // Liste contenant les pions éliminés lors du tour
     const deadPawn = []
@@ -197,8 +210,10 @@ const setYellowHover=(x,y,currPower)=>{
     const event = new Event('click', { bubbles : true })
     pawn.dispatchEvent(event)
 }
-  const handleYellowPlay = (x, y, power) => {
-
+  const handleYellowPlay = (isTrusted, x, y, power) => {
+    if(isOnline && isTrusted){
+      socket.emit("myMove","yellow", y, room)
+    }
     const currBoard = [...board]
     const deadPawn = []
     // Etat actuel du pion dans la matrice, en aller ou en retour
@@ -260,9 +275,12 @@ const setYellowHover=(x,y,currPower)=>{
                 powerGo={red.powerGo}
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
+                turn={turn}
                 handleBotPlay={handleBotPlay}
                 isAgainstBot={isAgainstBot}
-                turn={turn}
+                isOnline={isOnline}
+                player={player} 
+                host={host} 
               />
             ))
           }
@@ -279,6 +297,10 @@ const setYellowHover=(x,y,currPower)=>{
                 powerReturn={yellow.powerReturn}
                 handlePlay={handleYellowPlay}
                 turn={turn}
+                isOnline={isOnline}
+                isAgainstBot={isAgainstBot}
+                player={player} 
+                guest={guest}
               />
             ))
           }

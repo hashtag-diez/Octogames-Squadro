@@ -1,0 +1,108 @@
+$radius: 0.5rem;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.thing {
+  height: 100vh;
+  font-family: arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.all {
+  position: relative;
+}
+.titre {
+  color: black;
+  font-weight: 500;
+  opacity: .7;
+  font-size: 1.4rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+}
+span {
+  color: white;
+  font-weight: 700;
+  opacity: .9;
+/*   font-size: 1.4rem;
+ */  text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+}
+
+.code {
+  color: #da8012;
+  font-weight: 400;
+  opacity: .7;
+  font-size: 1.2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+  border: solid;
+  border-radius: $radius;
+}
+
+.form {
+  background: #e1e1e1;
+  padding: 3rem;
+  border-radius: 20px;
+  border-left: 1px solid rgba(255, 255, 255, .3);
+  border-top: 1px solid rgba(255, 255, 255, .3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  -moz-backdrop-filter: blur(10px);
+  box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, .2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  &__input {
+    width: 100%;
+    height: 10%;
+    border: 2px solid #000000;
+    border-radius: $radius;
+    font-family: inherit;
+    font-size: inherit;
+    color: whitesmoke;
+    outline: none;
+    padding: 1.25rem;
+    background: none;
+  }
+}
+/*.form {
+    position: relative;
+    width: 20rem;
+    height: 3rem;
+  
+    &__input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10%;
+      border: 2px solid #e1e5ee;
+      border-radius: $radius;
+      font-family: inherit;
+      font-size: inherit;
+      color: #4f546c;
+      outline: none;
+      padding: 1.25rem;
+      background: none;
+    }
+
+    &__label {
+      position: absolute;
+      left: 1rem;
+      top: 0.8rem;
+      padding: 0 0.5rem;
+      color: #4f546c;
+      cursor: text;
+      transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+    }
+}*/
+
+input[type=text]:focus{
+  border-color:#da8012;
+  box-shadow:0 0 8px 0 #da8012;
+}

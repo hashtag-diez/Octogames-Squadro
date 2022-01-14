@@ -103,9 +103,10 @@ function movePawnYellow(node){
     const currentPower = pion.currentPower;
     let distance = (x + currentPower >= 6 ? 6 - x : (x + currentPower <= 0 ? 0 - x : currentPower));
     for(let i = x; (currentPower > 0 ? i < x + distance : i > x + distance);(currentPower > 0 ? i++ : i--)){
-        if(i < 0 || i > 6) break
+        if(i<0) break
+        if(i>6) break
         /* si pion adverse présent sur ma ligne */
-        if(currentBoard[i][y] === 'r' || currentBoard[i][y] === 'R'){
+        if(currentBoard[i][y] === 'r'){
             if(x + distance >= 0 || x + distance <= 6){ /* pour ne pas dépasser du tableau */
                 distance = (currentPower > 0 ? distance + 1 : distance - 1);
             }
@@ -118,16 +119,16 @@ function movePawnYellow(node){
     var arrivee = x + distance; /* coordonnée d'arrivée */
     if(arrivee <= 0) arrivee = 0
     if(arrivee >= 6) arrivee = 6
-    if(currentPower < 0 && arrivee === 0) {
+    if(currentPower < 0 && arrivee == 0) {
         deletePawn(node, pion.id, true);
         node.botScore++;
         return;
     }
     if(pion.currentPower > 0 && arrivee === 6){ /* le pion a fait un aller */
-        pion.aller = true;
+        pion.aller = 1;
         pion.currentPower = powers[currentPower];
     }
-    currentBoard[arrivee][y] = (pion.currentPower > 0) ? "y" : "Y";
+    currentBoard[arrivee][y] = "y";
     currentBoard[x][y] = "+";   /* libération ancienne case */
     pion.x = arrivee;
 
@@ -160,8 +161,7 @@ function movePawnRed(node){
 
     for(let i = y; (currentPower > 0 ? i < y + distance : i > y + distance);(currentPower > 0 ? i++ : i--)){
         /* si pion adverse présent sur ma ligne */
-        if( i < 0 || i > 6 ) break
-        if(currentBoard[x][i] === 'y' || currentBoard[x][i] === 'Y'){
+        if(currentBoard[x][i] === 'y'){
             if(x + distance >= 0 || x + distance <= 6){ /* pour ne pas dépasser du tableau */
                 distance = (currentPower > 0 ? distance + 1 : distance - 1);
             }
@@ -184,7 +184,7 @@ function movePawnRed(node){
         pion.aller = 1;
         pion.currentPower = powers[currentPower];
     }
-    currentBoard[arrivee][y] = pion.currentPower > 0 ? "r" : "R";
+    currentBoard[arrivee][y] = "r";
     currentBoard[x][y] = "+";   /* libération ancienne case */
     pion.y = arrivee;
 
@@ -206,7 +206,7 @@ function majRedDeadPawn(node, y, list){
                 const power = pion.currentPower;
                 const caseDepart = (power > 0 ? 6 : 0); /* pour connaitre la bonne case départ */
                 pion.y = caseDepart;
-                node.currentBoard[pion.x][pion.y] = power > 0 ? "r" : "R"; /* MAJ board -> retour case départ pion rouge */
+                node.currentBoard[pion.x][pion.y] = "r"; /* MAJ board -> retour case départ pion rouge */
             }
         }
     });
@@ -224,7 +224,7 @@ function majYellowDeadPawn(node, x, list){
                 const power = pion.currentPower;
                 const caseDepart = (power > 0 ? 6 : 0); /* pour connaitre la bonne case départ */
                 pion.x = caseDepart;
-                node.currentBoard[pion.x][pion.y] = power > 0 ? "y" : "Y"; /* MAJ board -> retour case départ pion rouge */
+                node.currentBoard[pion.x][pion.y] = "y"; /* MAJ board -> retour case départ pion rouge */
             }
         }
     });
@@ -295,43 +295,40 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
     // listYellow, listRed, currPlateau
     let value;
     if (depth === 0 || node.children.length <= 0){
-        let color = node.isYellow ? "yellow" : "red";
+        let color = (maximizingPlayer ? "yellow" : "red");
         let evaluation = Evaluation(node, node.pion, color);
-        node.score = node.isYellow ? evaluation : -evaluation
-        return;
+        // evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
+        node.score = evaluation
+        return evaluation;
     }
 
     if (maximizingPlayer){
         value = -100000;
         const children = node.children;
         for(let i = 0; i < children.length; i++) {
-            MinMax(children[i], depth-1, false, alpha, beta);
-            var newValMax = children[i].score
+            var newValMax = MinMax(children[i], depth-1, false, alpha, beta);
             value = Math.max(value, newValMax);
             alpha = Math.max(alpha, newValMax);
             if(beta <= alpha) break;
         }
-        node.score = value
-        return;
+        return value;
     }
     else{
         value = 100000;
         const children = node.children;
         for(let i = 0; i < children.length; i++) {
-            MinMax(children[i], depth-1, true, alpha, beta);
-            var newValMin = children[i].score
+            var newValMin = MinMax(children[i], depth-1, true, alpha, beta);
             value = Math.min(value, newValMin);
             beta = Math.min(beta, newValMin);
             if(beta <= alpha) break;
         }
-        node.score = value
-        return
+        return value;
     }
 
 }
 
 export default function nextMove(listYellow, listRed, board) {
-    const depth = 4
+    const depth = 2
 
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
@@ -340,7 +337,8 @@ export default function nextMove(listYellow, listRed, board) {
 
     //minMax + élagage
     nodes.forEach(node => {
-        MinMax(node, depth, true, -100000, 100000);
+        node.score = MinMax(node, depth, true, -100000, 100000);
+        console.log("node score = " + node.score + "\n");
     })
 
     let idPion = nodes[0].idPawn;

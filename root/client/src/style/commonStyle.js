@@ -33,7 +33,6 @@ aside { //387
   }
   display: flex;
   flex-direction : column;
-  height: 100%;
   width: 40%;
   align-items: center;
   justify-content: center;

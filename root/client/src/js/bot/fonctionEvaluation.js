@@ -4,7 +4,7 @@ import PARAMETRES from '../../json/evaluation.json'
 export default function Evaluation(node, pion, color){
     const x = pion.x;
     const y = pion.y;
-    const aller = pion.currPower >= 0;
+    const aller = pion.aller;
     const currPower = pion.currentPower;
     const currPlateau = node.currentBoard;
     const listYellow = node.yellows
@@ -12,14 +12,15 @@ export default function Evaluation(node, pion, color){
     const checkWinnerConst = checkWinner(node)
     const pawnParameters = {
         id: pion.id,
+        AR: (currPower > 0)? 1 : 0,
         move : currPower,
         presentRisk : evalPresentRisk(x, y, color , currPower, currPlateau, listYellow, listRed),
         futureRisk : evalFutureRisk(x, y, color, currPower, currPlateau, listYellow, listRed),
         menace : evalMenace(x, y, color, currPower, currPlateau),
         staking : evalStack(x,y, color, listYellow, listRed),
-        distance : evalDistance(color === "yellow" ? x : y, currPower)
+        distance : (currPower > 0)? (6 - currPower)/6 : (6 + currPower)/6,
     }
-    const allerRetour = (aller) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
+    const allerRetour = (aller === 1) ? PARAMETRES['A/R']['RETOUR'] : PARAMETRES['A/R']['ALLER'];
     const deplacement = PARAMETRES['DEPLACEMENT'][`${pawnParameters.move}`];
     const risquePresent = pawnParameters.distance * pawnParameters.presentRisk * PARAMETRES["RISQUE"]["PRESENT"];
     const risqueFutur = pawnParameters.distance * pawnParameters.futureRisk * PARAMETRES["RISQUE"]["FUTUR"];
@@ -36,7 +37,7 @@ function checkWinner(node) {
     else if(node.botScore === 4){
         return 20;
     }
-    else return 0.1
+    else return 0
 }
 
 function evalDistance(coordonee, currPower){
@@ -44,10 +45,10 @@ function evalDistance(coordonee, currPower){
     return distance
 }
 
-function evalFutureRisk(x, y, color, currPower, currPlateau, listYellow, listRed){
+function evalFutureRisk(x, y, color, currPower, currPlateau,listYellow, listRed){
     let coordonee = (color === "yellow" ? x : y); /* coordonnée variant en fonction de si on est rouge ou jaune */
     const next = evalDistance(coordonee, currPower)
-    
+
     if(color === "yellow"){
         const pionAdverse = listRed.filter(pion => pion.x === next); /* y a t-il un pion adverse sur la prochaine ligne où je me déplace ? */
         if(pionAdverse.length > 0){
@@ -67,7 +68,7 @@ function evalFutureRisk(x, y, color, currPower, currPlateau, listYellow, listRed
             }
         }
     }
-    return 0.1;
+    return 0;
 }
 
 function evalPresentRisk(x, y, color, currPower, currPlateau, listYellow, listRed){
@@ -84,21 +85,25 @@ function evalPresentRisk(x, y, color, currPower, currPlateau, listYellow, listRe
           pionNonProteges = evalMenace(pionAdverse[0].y, pionAdverse[0].y, 'yellow', pionAdverse[0].currentPower, currPlateau);
         }
     }
-    return pionNonProteges + 0.1
+    if(pionNonProteges > 0){
+        return 10; /* je risque de me faire manger au prochain tour il faut que je déplace le pion (+BOT -PLAYER)*/
+    }else{
+        return 0 ;  /* l'adversaire ne me menace pas*/
+    }
 }
 
 /* on check s'il y a des pions adverses devant à une distance <= x + power || y + power (prochaine case du pion)*/
 function evalMenace(x, y, color, currPower, currPlateau){
     let total = 0;
     let coordonee = (color === "yellow" ? x : y); /* coordonnée variant en fonction de si on est rouge ou jaune */
+    const distance = (coordonee + currPower > 6 && currPower > 0 ? 6 : (coordonee + currPower < 0 && currPower < 0 ? 0 :  coordonee + currPower));
 
-    for(let i = coordonee; i <= currPower ; (currPower > 0 ? i++ : i--)){
-        if(i > 6 || i < 0) break
-        if ((color === "yellow" && (currPlateau[i][y] === 'r' || currPlateau[i][y] === 'R')) || (color === "red" && (currPlateau[x][i] === 'y' || currPlateau[x][i] === 'Y')) ) {
+    for(let i = coordonee; i < distance ; (currPower > 0 ? i++ : i--)){
+        if ((color === "yellow" && currPlateau[i][y] === 'r') || (color === "red" && currPlateau[x][i] === 'y') ) {
             total+=1;
         }
     }
-    return total + 0.1;
+    return total;
 }
 
 function evalStack(x, y, color, listYellow, listRed){
@@ -113,7 +118,7 @@ function evalStack(x, y, color, listYellow, listRed){
             if(pion.y === y) compt++;
         });
     }
-    return compt + 0.1;
+    return compt;
 }
 
 

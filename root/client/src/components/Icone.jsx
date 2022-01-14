@@ -2,19 +2,23 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 const URL = 'https://avatars.dicebear.com/api/'
 
-export const Icone = ({ editor, name, theme }) => {
+const Icone = ({ editor, name, theme, setUser, user, isHost }) => {
   const [seed, setSeed] = useState(!editor ? name : 'p')
   const [sprite, setSprite] = useState(!editor ? theme : 'adventurer')
   const [img, setImg] = useState(URL + sprite + '/' + seed + '.svg')
   const handleChange = (e) => {
     e.preventDefault()
+    const newSeed = e.target.value
     setSeed(e.target.value)
-    setImg(URL + sprite + '/' + seed + '.svg')
+    setImg(URL + sprite + '/' + newSeed + '.svg')
+    setUser({...user, name: newSeed })
   }
   const handleSelect = (e) => {
     e.preventDefault()
-    setSprite(e.target.value.toLowerCase().replace(/\s/g, '-'))
-    setImg(URL + e.target.value.toLowerCase().replace(/\s/g, '-') + '/' + seed + '.svg')
+    const newSprite = e.target.value.toLowerCase().replace(/\s/g, '-')
+    setSprite(newSprite)
+    setImg(URL + newSprite + '/' + seed + '.svg')
+    setUser({...user, sprite: newSprite })
   }
   const options = ['Adventurer', 'Adventurer Neutral', 'Avataaars', 'Big Ears', 'Big Ears Neutral', 'Big Smile', 'Bottts', 'Croodles', 'Croodles Neutral', 'Female', 'Gridy', 'Human', 'Identicon', 'Initials', 'Jdenticon', 'Male', 'Micah', 'Miniavs', 'Open Peeps', 'Personas', 'Pixel Art', 'Pixel Art Neutral']
   if (editor) {
@@ -39,8 +43,8 @@ export const Icone = ({ editor, name, theme }) => {
     )
   } else {
     return (
-      <StyledDivMin>
-        <StyledWrapperMin>
+      <StyledDivMin isHost={isHost}>
+        <StyledWrapperMin >
           <img src={img} />
         </StyledWrapperMin>
         <h3>{seed}</h3>
@@ -56,9 +60,13 @@ const StyledDiv = styled.div`
   gap: 30px;
 `
 const StyledDivMin = styled(StyledDiv)`
+  position: absolute;
   gap: 0px;
+  z-index: 99;
+  top: ${({ isHost }) => (isHost ? 'calc(50% - 40px)': '-120px' )};
+  left: ${({ isHost }) => (isHost ? '-120px': 'calc(50% - 40px)' )}; 
   h3{
-    margin: 10px 0px;
+    margin: 5px 0px;
   }
 `
 const StyledSelect = styled.select`
@@ -80,6 +88,7 @@ const StyledInput = styled.input`
   font-weight: 900;
   text-align: center;
   color : #937271;
+  outline: none;
   ::placeholder{
     font-family: 'Manrope', sans-serif;
     font-size: 20px;
@@ -108,3 +117,4 @@ const StyledWrapperMin = styled(StyledWrapper)`
   width: 80px;
   height: 80px;
 `
+export default Icone
