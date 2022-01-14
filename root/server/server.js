@@ -30,7 +30,10 @@ var roomIdLength = 6;
 
 //Creation de l'id d'une salle + vérification de son unicité
 const createID = () => {
-    return uuidv4().slice(0, 10)
+    do {
+        var num = uuidv4().slice(0, 10);
+    } while(checkIfIdExists(num));
+    return num;
 }
 
 const checkIfIdExists = (roomId) => {
@@ -60,10 +63,11 @@ const createRoom = (socket, room) => {
 //Rejoindre une salle
 const joinRoom = (socket, room) => { 
     var roomFound= false;
-    var roomObj = {};
+    var roomObj = false;
 
     activeRooms.map((Aroom) => {
         if(Aroom.id === room){
+            roomFound = true;
 
             // si < 2 rejoindre la partie
             if(Aroom.members.length < 2){
@@ -90,17 +94,16 @@ const joinRoom = (socket, room) => {
                         socket.to(Aroom.id).emit("startToPlay")
                         Aroom.members[1].emit("startToPlay")
                     }
-                    }, 1000)
+                    }, 500)
             }
         }
+        return Aroom;
     })
     if(!roomFound){
         roomObj = createRoom(socket, room);
         roomFound = true;
-        console.log(activeRooms);
     }
-    console.log(roomFound);
-    return roomFound;
+    return roomObj;
 }
 
 // exitTheRoom -> Supprime la room crée lorsqu'il n'a plus de joueurs + fait quitter le joueur
@@ -142,9 +145,8 @@ io.on('connection', (socket) => {
 
     // Si <2 joueurs dans la salle mais que la salle existe
     socket.on("tryToJoin", (roomId)=>{
-        console.log(checkIfIdExists(roomId));
-        console.log(roomId);
         if(checkIfIdExists(roomId)){
+            console.log(joinRoom(socket, roomId))
             if(joinRoom(socket, roomId)){
                 socket.emit("resultJoiningRoom",{status: true, text: "Bienvenue !"})
             }else{

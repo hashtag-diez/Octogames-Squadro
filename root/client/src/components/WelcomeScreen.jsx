@@ -89,8 +89,6 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
                             Enter Your name
                             <br />
                             <input type="text" name="name" id="name" autoComplete="off" autoFocus="true"
-                                pattern="[A-Za-z ]{4,}"
-                                title="Le nom d'utilisateur doit contenir au moins 4 lettres"
                                 value={name} onChange={(e)=>setName(e.target.value)}/>
                             <br />
                             <button type="submit">Submit</button>
