@@ -13,11 +13,11 @@ const { v4: uuidv4 } = require('uuid')
 //using .json files
 app.use(express.json());
 //On relit le back aux statics
-/* app.use(express.static('../client/build'));
+app.use(express.static('../client/build'));
 //single page app -> on renvoit tout sur le static .html (sauf l'api, plus haut, dès que le build aura marché)
 app.get('/*', (_, res) =>{
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
-}); */
+}); 
 server.listen(PORT);
 /*Express - END*/
 

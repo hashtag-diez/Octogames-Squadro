@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "client": "cd ../client && npm start",
-    "build": "cd ../client && npm run build"
+    "build": "node server.js"
   },
   "keywords": [],
   "author": "",
