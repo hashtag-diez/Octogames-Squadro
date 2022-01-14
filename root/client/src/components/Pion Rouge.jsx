@@ -4,7 +4,7 @@ import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
 import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnline, host, isAgainstBot, handleBotPlay }) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, hoverlist, turn, player, isOnline, host, isAgainstBot, handleBotPlay }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -80,8 +80,9 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnl
               setHover(false)
               console.log('Sorti')
             }}>
-          <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+          <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} turn={turn} step={distance} onClick={(e) => handleMovement(e)} />
           {
+              turn === 'r' &&
               hover &&
               hoverDiv.map((hover, i) => {
                 console.log('Entré pion rouge '+i)

@@ -93,10 +93,11 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn, hoverlist, is
               console.log('Sorti')
             }}
         >
-          <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
+          <StyledDiv animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} turn={turn} step={distance} onClick={(e) => handleMovement(e)}>
             <Yellow />
           </StyledDiv>
           {
+              turn === 'y' &&
               hover &&
               hoverDiv.map((hover, i) => {
                 if (hover === 2) {
