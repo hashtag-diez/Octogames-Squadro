@@ -75,14 +75,14 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
     }
   }
 
- const setYellowHover=(x,y,currPower)=>{
-    const currBoard = [...board]
-    let list=[0,0,0,0,0,0]
-    if(currPower===0){ return list}
-    let future=x+currPower
-    if(future>6){ future=6}
-    else if(future<0){ future=0}
-    let i
+const setYellowHover=(x,y,currPower)=>{
+  const currBoard = [...board]
+  let list=[0,0,0,0,0,0]
+  if(currPower===0){ return list}
+  let future=x+currPower
+  if(future>6){ future=6}
+  else if(future<0){ future=0}
+  let i
     if(currPower>0){
       for (i =x+1;i<=future ; i++){
         if(currBoard[i][y].toLowerCase()==='r'){
@@ -110,12 +110,12 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
     const currBoard = [...board]
     let list=[0,0,0,0,0,0]
     if(currPower===0){ return list}
-    let future=y+currPower
+    let future=x+currPower
     if(future>6){ future=6}
     else if(future<0){ future=0}
     let i
     if(currPower>0){
-      for (i =y+1;i<=future ; i++){
+      for (i =x+1;i<=future ; i++){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future++
@@ -125,7 +125,7 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
       }
     }
     else{
-      for (i =y-1;i>=future ; i--){
+      for (i =x-1;i>=future ; i--){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future--
@@ -134,10 +134,8 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
         }
       }
     }
-    console.log("pion ")
     return list
   }
-
   const handleRedPlay = (isTrusted, x, y, power) => {
     if(isOnline && isTrusted){
       console.log('emission !!!!')
@@ -273,7 +271,6 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
                 isOnline={isOnline}
                 player={player} 
                 host={host} 
-                hoverlist={setRedHover}
               />
             ))
           }
@@ -294,7 +291,6 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
                 isAgainstBot={isAgainstBot}
                 player={player} 
                 guest={guest}
-                hoverlist={setYellowHover}
               />
             ))
           }
