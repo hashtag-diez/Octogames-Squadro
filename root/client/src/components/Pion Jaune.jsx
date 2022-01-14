@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 import { ReactComponent as NormalHover } from '../assets/Hover Normal Jaune.svg'
 import { ReactComponent as HitHover } from '../assets/Hover Hit Jaune.svg'
-
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) => {
+//const socket = require('socket.io-client')
+const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist, isAgainstBot,isNetwork,socket,color,room }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -12,13 +12,33 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const [hover, setHover] = useState(false)
-  const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
-  const handleMovement = (e) => {
+    const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
+   const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y') {
-      if (currPower !== 0) {
-        console.log('position '+x+' power '+currPower)
 
+    if(currPower !== 0 && isNetwork && turn === 'y' && color==='yellow'){
+
+      const newPosX = handlePlay(posX, y, currPower)
+
+      socket.to(room).emit("myMove", (color, x, room))
+
+      console.log(color +" a envoi un message à l'opposant")
+      setDistance(newPosX - posX)
+      setPosX(newPosX)
+    }
+    else if (isAgainstBot && !e.isTrusted) {
+       if (currPower !== 0) {
+        console.log('position notBot '+x+' power '+currPower)
+        const newPosX = handlePlay(posX, y, currPower)
+        setDistance(newPosX - posX)
+        setPosX(newPosX)
+      } else {
+        console.log('%cPion inactif...', 'font-style: italic')
+      }
+    } else if(turn === 'y') {
+      console.log("JAUNE")
+      if (currPower !== 0) {
+        console.log('position'+x+' power '+currPower)
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
@@ -26,7 +46,9 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
         console.log('%cPion inactif...', 'font-style: italic')
       }
     }
-
+  }
+  const getCurrentPower = () => {
+    return currPower
   }
   useEffect(() => {
     if (x === 6) {
@@ -57,9 +79,7 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
       }
     }
   }, [posX])
-  useEffect(()=>{
-    console.log('position '+posX+' power '+currPower);
-      },[posX,currPower])
+
 
   if (!startAtTheOtherSide) {
     return (
@@ -144,6 +164,7 @@ const PawnWrapper = styled.div`
   position: relative;
 `
 const StyledDiv = styled.div`
+  filter: ${({ turn }) => (turn === 'r' ? 'grayscale(100%)' : '')};
   animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
@@ -155,11 +176,13 @@ const HoverDivNormal = styled(NormalHover)`
   position: absolute;
   top: ${({ i }) => `calc(${i}*94px)`};
   left: -3px;
+  z-index:-1;
 `
 const HoverDivHit = styled(HitHover)`
  position: absolute;
   top: ${({ i }) => `calc(${i}*94px)`};
   left: -3px;
+  z-index:-1;
 `
 
 export default PionJaune
