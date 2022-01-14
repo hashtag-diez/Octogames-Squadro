@@ -40,7 +40,7 @@ const Home = () => {
                 :
                 <>
                   <StyledLink to="/local"><Button color='#E02016' > <Local isAgainstBot={false} /> Jeu en local </Button> </StyledLink>
-                  <StyledLink to="/local_multiplayerGame"> <Button color='#DAA25D' > <Network /> Jeu en réseau </Button> </StyledLink>
+                  <StyledLink to="/network"> <Button color='#DAA25D' > <Network /> Jeu en réseau </Button> </StyledLink>
                   <BackButton color='#34495e9e' onClick={() => setMulti(false)}><Back /> </BackButton>
                 </>
               }

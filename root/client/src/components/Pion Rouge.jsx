@@ -4,7 +4,7 @@ import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
 import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
 
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot, handleBotPlay }) => {
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnline, host, isAgainstBot, handleBotPlay }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -15,9 +15,18 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot,
   //const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
   const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'r') {
+    if(isOnline && (player.name === host.name || !e.isTrusted)) {
+      console.log((!e.isTrusted ? 'L\'adversaire joue' : 'Vous jouez'))
       if (currPower !== 0) {
-        const newPosY = handlePlay(x, posY, currPower)
+        const newPosY = handlePlay(e.isTrusted,x, posY, currPower)
+        setDistance(newPosY - posY)
+        setPosY(newPosY)
+      } else {
+        console.log('%cPion inactif...', 'font-style: italic')
+      }
+    } else if(!isOnline&& turn === 'r') {
+      if (currPower !== 0) {
+        const newPosY = handlePlay(e.isTrusted, x, posY, currPower)
         setDistance(newPosY - posY)
         setPosY(newPosY)
         if(isAgainstBot) {

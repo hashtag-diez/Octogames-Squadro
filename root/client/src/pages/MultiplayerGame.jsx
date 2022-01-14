@@ -1,12 +1,14 @@
-import NetworkGame from './NetworkGame'
+import OnlineGame from './OnlineGame'
 import MultiplayerMenu from './MultiplayerMenu'
 import React, { useEffect, useState } from 'react'
-import io from 'socket.io-client';
+import socketIOClient from 'socket.io-client'
+const ENDPOINT = 'http://localhost:5000'
 
 function MultiplayerGame() {
   
-    const [player, setPlayer] = useState({name: ""})
-    const [opponent, setOpponent] = useState({name: ""})
+    const [player, setPlayer] = useState({name: "", sprite: ""})
+    const [host, setHost] = useState({name: "", sprite: ""})
+    const [guest, setGuest] = useState({name: "", sprite: ""})
     const [room, setRoom] = useState("");
     const [started, setStarted] = useState(false)
     const [socket, setSocket] = useState()
@@ -17,11 +19,15 @@ function MultiplayerGame() {
     useEffect(() => {
         if(player.name && !socket){
             setSocket(
-                io(window.location.origin, { 
-                    transports : ['websocket'] , 
-                    query:  `name=${player.name}`
+                socketIOClient(ENDPOINT,
+                {
+                    query: {
+                        token: player.name,
+                        sprite: player.sprite
+                    }
                 })
             );
+            console.log("On a ouvert le socket !")
         }
     }, [player])
      
@@ -33,8 +39,15 @@ function MultiplayerGame() {
             })
 
             // set le nom du joueur adverse
-            socket.on("readyToPlay", (roomObj)=>{
-            setOpponent({...opponent, name: roomObj.opponent})
+            socket.on("readyToPlayGuest", (roomObj)=>{
+                console.log("On est arrivé chez l'hôte !", roomObj.opponent.name, ", ", roomObj.opponent.sprite )
+                setHost({ name : roomObj.opponent.name, sprite : roomObj.opponent.sprite })
+                setGuest(player)
+            })
+            socket.on("readyToPlayHost", (roomObj)=> {
+                console.log("On a reçu a un invité ! ", roomObj.opponent.name, ", ", roomObj.opponent.sprite)
+                setHost(player)
+                setGuest({ name : roomObj.opponent.name, sprite : roomObj.opponent.sprite })
             })
       
             socket.on("startToPlay", ()=>{
@@ -44,9 +57,15 @@ function MultiplayerGame() {
     }, [socket])
 
   return (
-    <div className='Multiplayer'>
+    <div className='App'>
         {started ? 
-            <NetworkGame /> :
+            <OnlineGame 
+                player={player}
+                socket={socket}
+                room={room}
+                host={host}
+                guest={guest}
+                /> :
             <MultiplayerMenu 
                 player={player}
                 setPlayer={setPlayer}

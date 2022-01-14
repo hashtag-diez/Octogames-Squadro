@@ -13,11 +13,11 @@ const { v4: uuidv4 } = require('uuid')
 //using .json files
 app.use(express.json());
 //On relit le back aux statics
-app.use(express.static('../client/build'));
+/* app.use(express.static('../client/build'));
 //single page app -> on renvoit tout sur le static .html (sauf l'api, plus haut, dès que le build aura marché)
 app.get('/*', (_, res) =>{
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
+}); */
 server.listen(PORT);
 /*Express - END*/
 
@@ -53,8 +53,9 @@ const checkIfIdExists = (roomId) => {
 const createRoom = (socket, room) => {
     var roomObj = { 
         id:room, //createID();
-        members: [socket],
+        members: [],
     }
+    roomObj.members.push(socket)
     activeRooms.push(roomObj)
     socket.join(room)
     return roomObj;
@@ -78,14 +79,20 @@ const joinRoom = (socket, room) => {
             if(roomObj && Aroom.members.length == 2){
 
                 // Joueur 1
-                socket.to(Aroom.id).emit("readyToPlay", {
-                                opponent: Aroom.members[1].username,
+                socket.to(Aroom.id).emit("readyToPlayHost", {
+                                opponent: { 
+                                    name: Aroom.members[1].username,
+                                    sprite: Aroom.members[1].sprite
+                                },
                                 yourPosition: true //Pions du joueur
                             })
 
                 // Joueur 2
-                Aroom.members[1].emit("readyToPlay", {
-                                    opponent: Aroom.members[0].username,
+                Aroom.members[1].emit("readyToPlayGuest", {
+                                    opponent: { 
+                                        name: Aroom.members[0].username,
+                                        sprite: Aroom.members[0].sprite
+                                    },
                                     yourPosition: false //Pions de l'adversaire
                                 })
 
@@ -132,9 +139,9 @@ const exitTheRoom = (socket) => {
 }
 
 io.on('connection', (socket) => {
-    var newConnexion = socket.handshake.query.token;
-    socket.username = newConnexion;
-    console.log(`player joined`);
+    socket.username = socket.handshake.query.token;
+    socket.sprite =  socket.handshake.query.sprite;
+    console.log(socket.username + ' joined');
 
     //Si pas de salle -> retourne l'id de la salle + add le joueur
     socket.on("getRoomId",()=>{
@@ -160,6 +167,7 @@ io.on('connection', (socket) => {
     //Lorsqu'un pion est déplacé, son numéro est envoyé au serveur, le serveur envoit un message 
     //au client qui va déplacer ce pion
     socket.on("myMove", (side, pawn, room) => {
+        console.log("Le server a reçu un messaage de "+side+" pour l'indice "+pawn)
         socket.to(room).emit('opponentMove', { side: side, pawn: pawn });
     })
 
@@ -168,7 +176,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on("disconnect",()=>{
-        console.log(`player Disconnected'`);
+        console.log(socket.username, ' disconnected');
     })
-
 })

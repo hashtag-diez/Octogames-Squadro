@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { StyledMain, StyledHeader, StyledFooter, Button, StyledSpan } from '../style/commonStyle'
 import '../style/MultiplayerMenu.scss'
+import Icone from '../components/Icone'
 
 
 export default function MultiplayerMenu({ player, setPlayer, socket ,room, setRoom }) {
-    const [name, setName] = useState(player.name);
     const [error, setError] = useState();
     const [roomText, setRoomText] = useState("");
     const [createRoom, setCreateRoom] = useState(false);
     const [joinRoom, setJoinRoom] = useState(false);
-
+    const [user, setUser] = useState({name: 'p', sprite: 'adventurers'})
     //set le nom d'utilisateur 
     const handleFormUsername = (e) => {
         e.preventDefault();
-        setPlayer({ ...player,  name: name})
+        setPlayer(user)
     }
 
     //Envois l'IDRoom au serveur et gère les erreurs
@@ -90,11 +90,7 @@ export default function MultiplayerMenu({ player, setPlayer, socket ,room, setRo
                     // Pas encore de nom d'utilisateur, demandez de rentrer un pseudo avant de continuer
                     <div class="thing">
                     <form class="form" onSubmit={handleFormUsername} >
-                            <div class="titre">Choisis ton pseudo : </div>
-                            <br />
-                            <input class="form__input" type="text" name="name" id="name" autoComplete="off" placeholder="Pseudo"
-                                value={name} onChange={(e)=>setName(e.target.value)}/>
-                            <br />
+                            <Icone editor setUser={setUser} user={user} />
                             <Button color='#DAA25D' type="submit">Submit</Button>
                     </form>
                     </div>  

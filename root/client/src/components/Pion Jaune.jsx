@@ -4,7 +4,7 @@ import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 import { ReactComponent as NormalHover } from '../assets/Hover Normal Jaune.svg'
 import { ReactComponent as HitHover } from '../assets/Hover Hit Jaune.svg'
 
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist, isAgainstBot }) => {
+const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn, hoverlist, isOnline, isAgainstBot, player, guest  }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -18,16 +18,25 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist, isA
     if (isAgainstBot && !e.isTrusted) {
       if (currPower !== 0) {
         console.log('position '+x+' power '+currPower)
-        const newPosX = handlePlay(posX, y, currPower)
+        const newPosX = handlePlay(e.isTrusted, posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
       } else {
         console.log('%cPion inactif...', 'font-style: italic')
       }
-    } else if(turn === 'y') {
+    } else if(isOnline && (player.name === guest.name || !e.isTrusted)) {
       if (currPower !== 0) {
         console.log('position '+x+' power '+currPower)
-        const newPosX = handlePlay(posX, y, currPower)
+        const newPosX = handlePlay(e.isTrusted, posX, y, currPower)
+        setDistance(newPosX - posX)
+        setPosX(newPosX)
+      } else {
+        console.log('%cPion inactif...', 'font-style: italic')
+      }
+    } else if(!isOnline && !isAgainstBot && turn === 'y') {
+      if (currPower !== 0) {
+        console.log('position '+x+' power '+currPower)
+        const newPosX = handlePlay(e.isTrusted, posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
       } else {
