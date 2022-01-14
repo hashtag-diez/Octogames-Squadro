@@ -2,19 +2,10 @@ import React, { useState } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
+import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = () => {
-  window.addEventListener('beforeunload', (ev) =>
-  {
-    ev.preventDefault();
-    alert('Are you sure you want to close?');
-    console.log('Are you sure you want to close?');
-  });
-  window.onhashchange = function() {
-    alert('Are you sure you want to close?');
-    console.log('Are you sure you want to close?');
-  }
+export const Plateau = ({ score, setScore, isAgainstBot,isNetwork,socket,color,room }) => {
   const [board, setBoard] = useState(
       [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
         ['r', '+', '+', '+', '+', '+', '—'],
@@ -27,63 +18,72 @@ export const Plateau = () => {
   )
   const [yellows, setYellows] = useState(
       [
-        { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3 },
-        { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1 },
-        { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2 },
-        { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1 },
-        { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3 }
+        { id: 1, x: 0, y: 1, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false },
+        { id: 2, x: 0, y: 2, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+        { id: 3, x: 0, y: 3, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+        { id: 4, x: 0, y: 4, powerGo: 3, powerReturn: -1, currentPower : 3, hasArrived : false },
+        { id: 5, x: 0, y: 5, powerGo: 1, powerReturn: -3, currentPower : 1, hasArrived : false }
       ]
   )
   const [reds, setReds] = useState(
       [
-        { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1 },
-        { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3 },
-        { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2 },
-        { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3 },
-        { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1 }
+        { id: 1, x: 1, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false },
+        { id: 2, x: 2, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+        { id: 3, x: 3, y: 0, powerGo: 2, powerReturn: -2, currentPower : 2, hasArrived : false },
+        { id: 4, x: 4, y: 0, powerGo: 1, powerReturn: -3, currentPower : 3, hasArrived : false },
+        { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false }
       ]
   )
 
-  const [score, setScore] = useState([0, 0])
-  const [empty, setEmpty] = useState([0, 0])
-  const [turn, setTurn] = useState('y')
+  const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
-      const [powerGo, powerReturn, origin] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0]]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newReds[x - 1].powerGo, newReds[x - 1].powerReturn, board[newReds[x - 1].x][0], newReds[x - 1].currentPower, newReds[x - 1].hasArrived]
       delete newReds[x - 1]
-      newReds[x - 1] = { id: Date.now() + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn }
+      newReds[x - 1] = { id: Date.now() * 10 + x, x: x, y: (origin === 'r' ? 0 : 6), powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived: hasArrived }
     })
     setReds(newReds)
   }
   const replaceYellowPawn = (list) => {
     const newYellows = [...yellows]
     list.forEach(y => {
-      const [powerGo, powerReturn, origin] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y]]
+      const [powerGo, powerReturn, origin, currentPower, hasArrived] = [newYellows[y - 1].powerGo, newYellows[y - 1].powerReturn, board[0][newYellows[y - 1].y], newYellows[y - 1].currentPower, newYellows[y - 1].hasArrived]
       delete newYellows[y - 1]
-      newYellows[y - 1] = { id: Date.now() + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn }
+      newYellows[y - 1] = { id: Date.now() * 10 + y, x: (origin === 'y' ? 0 : 6), y: y, powerGo: powerGo, powerReturn: powerReturn, currentPower: currentPower, hasArrived : hasArrived }
     })
     setYellows(newYellows)
   }
-  const updateYellows = (x, y) => {
+  const updateYellows = (x, y, power) => {
     const newYellows = [...yellows]
     newYellows[y - 1].x = x
+    newYellows[y - 1].currentPower = power
     setYellows(newYellows)
   }
-  const updateReds = (x, y) => {
+  const updateReds = (x, y, power) => {
     const newReds = [...reds]
     newReds[x - 1].y = y
+    newReds[x - 1].currentPower = power
     setReds(newReds)
   }
+  const updateArrived = (id, isYellow) => {
+    const newPawns = isYellow ? [...yellows] : [...reds]
+    newPawns[id - 1].hasArrived = true
+    if(isYellow) {
+      setYellows(newPawns)
+    } else {
+      setReds(newPawns)
+    }
+  }
 
-const setYellowHover=(x,y,currPower)=>{
-  const currBoard = [...board]
-  let list=[0,0,0,0,0,0]
-  if(currPower===0){ return list}
-  let future=x+currPower
-  if(future>6){ future=6}
-  else if(future<0){ future=0}
-  let i
+  const setYellowHover=(x,y,currPower)=>{
+    const currBoard = [...board]
+    let list=[0,0,0,0,0,0]
+    if(currPower===0){ return list}
+    let future=x+currPower
+    if(future>6){ future=6}
+    else if(future<0){ future=0}
+    let i
     if(currPower>0){
       for (i =x+1;i<=future ; i++){
         if(currBoard[i][y].toLowerCase()==='r'){
@@ -111,12 +111,12 @@ const setYellowHover=(x,y,currPower)=>{
     const currBoard = [...board]
     let list=[0,0,0,0,0,0]
     if(currPower===0){ return list}
-    let future=x+currPower
+    let future=y+currPower
     if(future>6){ future=6}
     else if(future<0){ future=0}
     let i
     if(currPower>0){
-      for (i =x+1;i<=future ; i++){
+      for (i =y+1;i<=future ; i++){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future++
@@ -126,7 +126,7 @@ const setYellowHover=(x,y,currPower)=>{
       }
     }
     else{
-      for (i =x-1;i>=future ; i--){
+      for (i =y-1;i>=future ; i--){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future--
@@ -135,9 +135,74 @@ const setYellowHover=(x,y,currPower)=>{
         }
       }
     }
+    console.log("pion ")
     return list
   }
+
+  const handleBotPlay = () => {
+    let idNextPawn = nextMove([...yellows], [...reds], [...board])
+    const pawn = yellows[idNextPawn - 1]
+    triggerClick(idNextPawn, 'yellow')
+  }
+
+  const triggerClick = (i, side) => {
+    const pawn = (side==='red' ? document.querySelector('.red-row').childNodes[i-1] : document.querySelector('.yellow-row').childNodes[i-1])
+    const event = new Event('click', { bubbles : true })
+    pawn.dispatchEvent(event)
+  }
+
+
+  const handleYellowPlay = (x, y, power) => {
+
+    console.log('network jaune'+isNetwork)
+    const currBoard = [...board]
+    const deadPawn = []
+    // Etat actuel du pion dans la matrice, en aller ou en retour
+    const state = currBoard[x][y]
+    let distance = (x + power >= 6 ? 6 - x : (x + power <= 0 ? 0 - x : power))
+    let i
+    console.log(x + distance)
+    /*
+      Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
+      Le sens de parcours de la ligne/colonne dépend de la valeur de power, si on est en al`ler ou en retour
+      Les operateurs conditionnels dans la boucle for permet de fixer ce sens de parcours
+      Permet de réduire le code et la répétition des boucles
+    */
+    for (i = x; (power > 0 ? i <= x + distance : i >= x + distance); (power > 0 ? i++ : i--)) {
+      // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
+      if (i > 0 && i < 6 && currBoard[i][y].toLowerCase() === 'r') {
+        distance = (power > 0 ? distance + 1 : distance - 1)
+        console.log('On va regarder la case [',i,',',y,']')
+        deadPawn.push(i)
+        currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
+        currBoard[i][y] = '+'
+      }
+    }
+    const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
+    replaceRedPawn(deadPawn)
+    if (res === 6) currBoard[res][y] = 'Y'
+    else currBoard[res][y] = state
+    if (x === 0 || x === 6) currBoard[x][y] = '|'
+    else currBoard[x][y] = '+'
+    // Si un aller-retour complet réalisé, incrémentation du score
+    setBoard(currBoard)
+    setTurn('r')
+    updateYellows(res, y, power)
+    // Si un aller-retour complet réalisé, incrémentation du score
+    if (res === 0 && power < 0) {
+      const newScore = [...score]
+      newScore[1]++
+      console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
+      setScore(newScore)
+      updateArrived(y, true)
+      return 0
+    } else  {
+      console.log('%cPion Jaune n°' + y + ' a bougé de' + x + ' à ' + res , 'color: #DAA25D')
+      return res
+    }
+  }
   const handleRedPlay = (x, y, power) => {
+    console.log("je suis " +{color})
     const currBoard = [...board]
     // Liste contenant les pions éliminés lors du tour
     const deadPawn = []
@@ -166,81 +231,59 @@ const setYellowHover=(x,y,currPower)=>{
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
-    // Si un aller-retour complet réalisé, incrémentation du score
+    replaceYellowPawn(deadPawn)
+    if (res === 6) currBoard[x][res] = 'R'
+    else currBoard[x][res] = state
+    // Si le pion a quitté une bordure de sa ligne/colonne
+    if (y === 0 || y === 6) currBoard[x][y] = '—'
+    else currBoard[x][y] = '+'
+    setBoard(currBoard)
+    setTurn('y')
+    updateReds(x, res, power)
     if (res === 0 && power < 0) {
       const newScore = [...score]
       newScore[0]++
       console.log('%cPion Rouge n°' + x + ' a fait un aller-retour complet ! +1 point pour les Rouges !', 'color: green')
       setScore(newScore)
+      updateArrived(x, false)
       return 0
+    } else {
+      console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
+      return res
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    if (y === 0 || y === 6) currBoard[x][y] = '—'
-    else currBoard[x][y] = '+'
-    updateReds(x, res)
-    setBoard(currBoard)
-    setTurn ('y')
-    console.log('%cPion Rouge n °' + x + ' a bougé de ' + y + ' à ' + res, 'color: #E02016')
-    return res
   }
-  const handleYellowPlay = (x, y, power) => {
 
-    const currBoard = [...board]
-    const deadPawn = []
-    // Etat actuel du pion dans la matrice, en aller ou en retour
-    const state = currBoard[x][y]
-    let distance = (x + power >= 6 ? 6 - x : (x + power <= 0 ? 0 - x : power))
-    let i
-    console.log(x + distance)
-    /*
-      Opérateur condititonnel -> ( condition ? instruction : instruction ), remplace le if/else
-      Le sens de parcours de la ligne/colonne dépend de la valeur de power, si on est en al`ler ou en retour
-      Les operateurs conditionnels dans la boucle for permet de fixer ce sens de parcours
-      Permet de réduire le code et la répétition des boucles
-    */
-    for (i = x; (power > 0 ? i <= x + distance : i >= x + distance); (power > 0 ? i++ : i--)) {
-      // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
-      if (i > 0 && i < 6 && currBoard[i][y].toLowerCase() === 'r') {
-        distance = (power > 0 ? distance + 1 : distance - 1)
-        deadPawn.push(i)
-        currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
-        currBoard[i][y] = '+'
-      }
+ /* const handleNetworkYellowPlay = (x,y,power,socket,color,room) => {
+    if(color==='yellow'){
+      console.log("je suis network " +color+" dans la salle "+room)
+      let res=handleYellowPlay(x,y,power)
+      socket.to(room).emit("MoveYellow",{ x:x,y:y,power:power})
+      return res
+    }else{
+      console.log("Jaune ecoute ")
+      socket.on('MoveRed',(x,y,power,room)=>{
+        handleYellowPlay(x,y,power)
+      })
     }
-    const res = (power > 0 ? (i > 6 ? 6 : i - 1) : (i < 0 ? 0 : i + 1))
-    replaceRedPawn(deadPawn)
-    if (res === 6) currBoard[res][y] = 'Y'
-    else currBoard[res][y] = state
-    // Si un aller-retour complet réalisé, incrémentation du score
-    if (res === 0 && power < 0) {
-      const newScore = [...score]
-      newScore[1]++
-      console.log('%cPion Jaune n°' + y + ' a fait un aller-retour complet ! +1 point pour les Jaunes !', 'color: green')
-      setScore(newScore)
-      return 0
+  }*/
+
+ /* const handleNetworkRedPlay = (x,y,power,socket,color,room) => {
+    if(color==='red'){
+      console.log("je suis network " +color+" dans la salle "+room)
+      let res=handleRedPlay(x,y,power)
+      socket.to(room).emit("MoveRed",{ x:x,y:y,power:power})
+      console.log("Message envoyé")
+      return res
+    }else{
+      console.log("Rouge ecoute ")
+      socket.on("MoveYellow",(x,y,power,roomText)=>{
+        handleRedPlay(x,y,power)
+      })
     }
-    // Si le pion a quitté une bordure de sa ligne/colonne
-    console.log(res)
-    if (x === 0 || x === 6) currBoard[x][y] = '|'
-    else currBoard[x][y] = '+'
-    updateYellows(res, y)
-    setBoard(currBoard)
-    setTurn('r')
-    // console.log(board)
-    console.log('%cPion Jaune n°' + y + ' a bougé de ' + x + ' à ' + res, 'color: #DAA25D')
-    return res
-  }
+  }*/
+
   return (
-
       <>
-        <h1>
-          Rouge : {score[0]}
-          &emsp;
-          Jaune : {score[1]}
-        </h1>
-        {
-        (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      }
         <div className='board-wrapper'>
           <Board />
           <div className='red-row'>
@@ -253,8 +296,15 @@ const setYellowHover=(x,y,currPower)=>{
                       powerGo={red.powerGo}
                       powerReturn={red.powerReturn}
                       handlePlay={handleRedPlay}
-                      turn='r'
+                      handleBotPlay={handleBotPlay}
+                      isAgainstBot={isAgainstBot}
+                      isNetwork={isNetwork}
+                      socket={socket}
+                      color={color}
+                      //handleNetworkPlay={handleNetworkRedPlay}
+                      turn={turn}
                       hoverlist={setRedHover}
+                      room={room}
                   />
               ))
             }
@@ -263,14 +313,21 @@ const setYellowHover=(x,y,currPower)=>{
             {
               yellows.map(yellow => (
                   <PionJaune
+                      id={"y" + yellow.id}
                       key={yellow.id}
                       x={yellow.x}
                       y={yellow.y}
                       powerGo={yellow.powerGo}
                       powerReturn={yellow.powerReturn}
                       handlePlay={handleYellowPlay}
-                      turn='y'
+                      turn={turn}
                       hoverlist={setYellowHover}
+                      isNetwork={isNetwork}
+                      socket={socket}
+                      color={color}
+                      hoverlist={setYellowHover}
+                      //handleNetworkPlay={handleNetworkYellowPlay}
+                      room={room}
                   />
               ))
             }
