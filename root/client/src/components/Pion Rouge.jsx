@@ -12,7 +12,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnl
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const [hover, setHover] = useState(false)
-  //const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
+  const [hoverDiv, setHoverDiv] = useState(hoverlist(x,posY,currPower)) // 0 : rien, 1 : normal, 2 : colission
   const handleMovement = (e) => {
     e.preventDefault()
     if(isOnline && (player.name === host.name || !e.isTrusted)) {
@@ -70,15 +70,41 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnl
   }, [posY])
   if (!startAtTheOtherSide) {
     return (
-      <>
-        <StyledRed turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-      </>
+        <PawnWrapper
+            onMouseEnter={() => {
+              console.log('Entré pion  ')
+              setHoverDiv(hoverlist(x,posY,currPower))
+              setHover(true)
+            }}
+            onMouseLeave={() => {
+              setHover(false)
+              console.log('Sorti')
+            }}>
+          <StyledRed animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+          {
+              hover &&
+              hoverDiv.map((hover, i) => {
+                console.log('Entré pion rouge '+i)
+                if (hover === 2) {
+                  return (
+                      <HoverDivHit key={y + i} i={i} y={y} />
+                  )
+                } else if (hover === 1) {
+                  return (
+                      <HoverDivNormal key={y + i} i={i} y={y} />
+                  )
+                }else {
+                  return (<div />)
+                }
+              })
+          }
+        </PawnWrapper>
     )
   } else {
     return (
-      <>
-        <StyledRedReversed turn={turn} animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-      </>
+        <>
+          <StyledRedReversed animateSlide={animateSlide} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
+        </>
     )
   }
 }
@@ -131,16 +157,22 @@ const StyledRedReversed = styled(StyledRed)`
 const PawnWrapper = styled.div`
   position: relative;
 `
-
+const d=(a)=>{return (a*94)+29}
 const HoverDivNormal = styled(NormalHover)`
-  position: absolute;
-  top: ${({ i }) => `calc(${i}*94px)`};
-  left: -3px;
+  position:  absolute;
+  transform:rotate(90deg);
+  left: ${({i })=>`${d(i)}px`};
+  top: -33px;
+  z-index:-1;
 `
 const HoverDivHit = styled(HitHover)`
    position: absolute;
-  top: ${({ i }) => `calc(${i}*94px)`};
-  left: -3px;
+   transform: rotate(90deg);
+  left: ${({ i }) => `${d(i)}px`};
+  top: -33px;
+  z-index:-1;
 `
 
 export default PionRouge
+
+ 
