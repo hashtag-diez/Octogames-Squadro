@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
 import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
-
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist  }) => {
+//const socket = require('socket.io-client');
+const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot, handleBotPlay,isNetwork,hoverlist,socket,color,room }) => {
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -16,10 +16,22 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist  }) 
   const handleMovement = (e) => {
     e.preventDefault()
     if (turn === 'r') {
-      if (currPower !== 0) {
+      console.log("ROUGE")
+      if(currPower !== 0 && isNetwork  && color==='red'){
+        console.log(color +" envoi à l'opposant")
+        const newPosY = handlePlay(posY, y, currPower)
+
+        socket.to(room).emit("myMove", (color, y, room))
+        console.log(color +" a envoyé à l'opposant")
+        setDistance(newPosY - posY)
+        setPosY(newPosY)
+      } else if (currPower !== 0) {
         const newPosY = handlePlay(x, posY, currPower)
         setDistance(newPosY - posY)
         setPosY(newPosY)
+        if(isAgainstBot) {
+          const timeout = setTimeout(handleBotPlay, 1500)
+        }
       } else {
         console.log('%cPion inactif...', 'font-style: italic')
       }
@@ -57,7 +69,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist  }) 
     return (
         <PawnWrapper
             onMouseEnter={() => {
-              console.log('Entré')
+              console.log('Entré pion  ')
               setHoverDiv(hoverlist(x,posY,currPower))
               setHover(true)
             }}
@@ -69,6 +81,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist  }) 
           {
               hover &&
               hoverDiv.map((hover, i) => {
+                console.log('Entré pion rouge '+i)
                 if (hover === 2) {
                   return (
                       <HoverDivHit key={y + i} i={i} y={y} />
@@ -130,6 +143,7 @@ const rotate = keyframes`
   }
 `
 const StyledRed = styled(Red)`
+  filter: ${({ turn }) => (turn === 'y' ? 'grayscale(100%)' : '')};
   animation: ${spawn('go')} 0.5s ease-in-out forwards, ${({ animateSlide, curr, step }) => (animateSlide && step !== 0 ? slideGo(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards, 
   ${({ animateSlide, animateRotate }) => (animateRotate && !animateSlide ? rotate : '')} 0.3s ease-in-out forwards,
   ${({ animateSlide, animateRotate, curr, step }) => (animateRotate && animateSlide ? slideReturn(curr * 94 - step * 94, curr * 94) : '')} 0.3s ease-in-out forwards;
@@ -140,16 +154,21 @@ const StyledRedReversed = styled(StyledRed)`
 const PawnWrapper = styled.div`
   position: relative;
 `
-
+const d=(a)=>{return (a*94)+29}
 const HoverDivNormal = styled(NormalHover)`
-  position: absolute;
-  top: ${({ i }) => `calc(${i}*94px)`};
-  left: -3px;
+  position:  absolute;
+  transform:rotate(90deg);
+  left: ${({i })=>`${d(i)}px`};
+  top: -33px;
+  z-index:-1;
 `
 const HoverDivHit = styled(HitHover)`
    position: absolute;
-  top: ${({ i }) => `calc(${i}*94px)`};
-  left: -3px;
+   transform: rotate(90deg);
+  left: ${({ i }) => `${d(i)}px`};
+  top: -33px;
+  z-index:-1;
 `
 
 export default PionRouge
+
