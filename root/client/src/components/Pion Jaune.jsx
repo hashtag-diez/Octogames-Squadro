@@ -12,8 +12,8 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn, hoverlist, is
   const [distance, setDistance] = useState(0)
   const [startAtTheOtherSide, setStartAtTheOtherSide] = useState(false)
   const [hover, setHover] = useState(false)
-  const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
-  const handleMovement = (e) => {
+/*   const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
+ */  const handleMovement = (e) => {
     e.preventDefault()
     if (isAgainstBot && !e.isTrusted) {
       if (currPower !== 0) {
