@@ -273,6 +273,7 @@ const setYellowHover=(x,y,currPower)=>{
                 isOnline={isOnline}
                 player={player} 
                 host={host} 
+                hoverlist={setRedHover}
               />
             ))
           }
@@ -292,6 +293,7 @@ const setYellowHover=(x,y,currPower)=>{
                 isOnline={isOnline}
                 isAgainstBot={isAgainstBot}
                 player={player} 
+                hoverlist={setYellowHover}
                 guest={guest}
               />
             ))
