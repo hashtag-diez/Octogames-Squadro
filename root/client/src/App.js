@@ -13,8 +13,8 @@ function App () {
           <Router>
               <Routes>
                   <Route exact path="/" element={<Home/>}></Route>
-                  <Route exact path="/sologame" element={<BotGame Authorized={true}/>}></Route>
-                  <Route path="/local_multiplayerGame" element={<LocalGame isAgainstBot={false} />} />
+                  <Route path="/bot" element={<LocalGame isAgainstBot={true} />} />
+                  <Route path="/local" element={<LocalGame isAgainstBot={false} />} />
 {/*                   <Route exact path="/multiplayerGame" element={<Waiting/>}></Route>
  */}                  <Route exact path="/AboutUs" element={<AboutUs/>}></Route>
                   <Route exact path="*" element={<Home/>}></Route>

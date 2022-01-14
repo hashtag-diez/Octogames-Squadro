@@ -25,6 +25,7 @@ padding-left: 180px;
 padding-right: 90px;
 height: 78%;
 align-items: center;
+justify-content: center;
 aside { //387
   svg { //653
     width: 60%;

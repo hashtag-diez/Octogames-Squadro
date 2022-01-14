@@ -5,7 +5,7 @@ import PionRouge from './Pion Rouge'
 import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
+export const Plateau = ({ score, setScore, isAgainstBot }) => {
   const [board, setBoard] = useState(
       [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
         ['r', '+', '+', '+', '+', '+', '—'],
@@ -35,7 +35,6 @@ export const Plateau = ({ score, setScore, isAgainstBot, mode }) => {
     ]
   )
 
-  const [againstBot, setAgainstBot] = useState(true)
   const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
@@ -249,14 +248,6 @@ const setYellowHover=(x,y,currPower)=>{
 
   return (
     <>
-      <h1>
-        Rouge : {score[0]}
-        &emsp;
-        Jaune : {score[1]}
-      </h1>
-      {
-        (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      }
       <div className='board-wrapper'>
         <Board />
         <div className='red-row'>
@@ -270,7 +261,7 @@ const setYellowHover=(x,y,currPower)=>{
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
                 handleBotPlay={handleBotPlay}
-                isAgainstBot={againstBot}
+                isAgainstBot={isAgainstBot}
                 turn={turn}
               />
             ))

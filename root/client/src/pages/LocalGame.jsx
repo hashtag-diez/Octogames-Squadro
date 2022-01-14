@@ -5,7 +5,7 @@ import { ReactComponent as Retry } from '../assets/retry.svg'
 import { StyledMain, StyledHeader, StyledFooter, Button, StyledSpan } from '../style/commonStyle'
 import Plateau from '../components/Plateau'
 
-const LocalGame = (isAgainstBot) => {
+const LocalGame = ({ isAgainstBot }) => {
   const [score, setScore] = useState([0, 0])
 
   return (
@@ -14,11 +14,7 @@ const LocalGame = (isAgainstBot) => {
         <img src={logo} alt='logo' />
       </StyledHeader>
       <StyledMain>
-          {!isAgainstBot ?
-              <Plateau score={score} setScore={setScore} isAgainstBot={isAgainstBot} mode="local" />
-            :
-              <Plateau score={score} setScore={setScore} isAgainstBot={isAgainstBot} mode="bot" />
-          }
+        <Plateau score={score} setScore={setScore} isAgainstBot={isAgainstBot} />
         <aside>
           {
             score[0] === 4 || score[1] === 4

@@ -4,7 +4,7 @@ import { ReactComponent as Yellow } from '../assets/Pion Jaune.svg'
 import { ReactComponent as NormalHover } from '../assets/Hover Normal Jaune.svg'
 import { ReactComponent as HitHover } from '../assets/Hover Hit Jaune.svg'
 
-const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) => {
+const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist, isAgainstBot }) => {
   const [posX, setPosX] = useState(x)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
@@ -15,10 +15,18 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
 /*   const [hoverDiv, setHoverDiv] = useState(hoverlist(posX,y,currPower)) // 0 : rien, 1 : normal, 2 : colission, 3 : final
  */  const handleMovement = (e) => {
     e.preventDefault()
-    if (turn === 'y' && ! e.isTrusted) {
+    if (isAgainstBot && !e.isTrusted) {
       if (currPower !== 0) {
         console.log('position '+x+' power '+currPower)
-
+        const newPosX = handlePlay(posX, y, currPower)
+        setDistance(newPosX - posX)
+        setPosX(newPosX)
+      } else {
+        console.log('%cPion inactif...', 'font-style: italic')
+      }
+    } else if(turn === 'y') {
+      if (currPower !== 0) {
+        console.log('position '+x+' power '+currPower)
         const newPosX = handlePlay(posX, y, currPower)
         setDistance(newPosX - posX)
         setPosX(newPosX)
@@ -26,7 +34,6 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn,hoverlist }) =
         console.log('%cPion inactif...', 'font-style: italic')
       }
     }
-
   }
   const getCurrentPower = () => {
     return currPower
