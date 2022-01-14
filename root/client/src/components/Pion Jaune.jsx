@@ -82,37 +82,9 @@ const PionJaune = ({ x, y, powerGo, powerReturn, handlePlay, turn, hoverlist, is
 
   if (!startAtTheOtherSide) {
     return (
-      <PawnWrapper
-            onMouseEnter={() => {
-              console.log('Entré')
-              setHoverDiv(hoverlist(posX,y,currPower))
-              setHover(true)
-            }}
-            onMouseLeave={() => {
-              setHover(false)
-              console.log('Sorti')
-            }}
-        >
       <StyledDiv turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posX} step={distance} onClick={(e) => handleMovement(e)}>
         <Yellow />
       </StyledDiv>
-       {
-              hover &&
-              hoverDiv.map((hover, i) => {
-                if (hover === 2) {
-                  return (
-                      <HoverDivHit key={y + i} i={i} y={y} />
-                  )
-                } else if (hover === 1) {
-                  return (
-                      <HoverDivNormal key={y + i} i={i} y={y} />
-                  )
-                }else {
-                  return (<div />)
-                }
-              })
-          }
-        </PawnWrapper>
     )
   } else {
     return (
@@ -175,13 +147,11 @@ const HoverDivNormal = styled(NormalHover)`
   position: absolute;
   top: ${({ i }) => `calc(${i}*94px)`};
   left: -3px;
-  z-index:-1;
 `
 const HoverDivHit = styled(HitHover)`
  position: absolute;
   top: ${({ i }) => `calc(${i}*94px)`};
   left: -3px;
-  z-index:-1;
 `
 
 export default PionJaune
