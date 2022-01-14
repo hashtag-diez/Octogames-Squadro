@@ -33,7 +33,7 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
     useEffect(() => {
         if(createRoom){
             socket.emit("getRoomId");
-            socket.on('sendRoomId', (data)=>{
+            socket.on("sendRoomId", (data)=>{
                 setRoom(data)
             })
         }
@@ -66,8 +66,6 @@ export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom
                                         <br />
                                             <input type="text" name="id" id="id" autoComplete="off" 
                                                 autoFocus="true"
-                                                pattern="[0-9]{6}"
-                                                title="Le code doit contenir 6 chiffres"
                                                 value={roomText} onChange={(e)=>setRoomText(e.target.value)}/>
                                         <br/>
                                         <i style={{color :"#dd3300", fontSize: "15px"}}>{error}</i>

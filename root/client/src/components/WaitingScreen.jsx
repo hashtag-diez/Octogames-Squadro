@@ -8,11 +8,6 @@ function WaitingScreen() {
                 <span style={{fontSize: "15px"}}>Le jeu commence bientot...</span>
                 <br />
                 <br />
-                <div className={styles.loader}>
-                    <div className={styles.lineLeft}></div>
-                    <div className={styles.ball}></div>
-                    <div className={styles.lineRight}></div>
-                </div>
             </div>   
         </div>
     )

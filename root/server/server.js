@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5000
 const app = express();
 const server = http.createServer(app);
 const io = socket(server, {cors: {origin: "*", methods: ["GET", "POST"]}});
+const { v4: uuidv4 } = require('uuid')
 
 
 //using .json files
@@ -29,24 +30,19 @@ var roomIdLength = 6;
 
 //Creation de l'id d'une salle + vérification de son unicité
 const createID = () => {
-	do {
-		var i = 0;
-		var roomId = 0;
-		while (i < roomIdLength) {
-			roomId = (roomId*10) + Math.random()%10 ;
-			i++;
-		}
-	} while (checkIfIdExists(roomId));
-	return roomId.toString();
+    return uuidv4().slice(0, 10)
 }
 
 const checkIfIdExists = (roomId) => {
+    var found = false;
+    console.log(activeRooms);
     activeRooms.forEach(Aroom => {
         if(Aroom.id == roomId){
-            return true;
+            found = true;
+            return found;
         }
     })
-    return false;
+    return found;
 }
 
 //Cree une salle
@@ -54,7 +50,7 @@ const checkIfIdExists = (roomId) => {
 const createRoom = (socket, room) => {
     var roomObj = { 
         id:room, //createID();
-        members: [socket]
+        members: [socket],
     }
     activeRooms.push(roomObj)
     socket.join(room)
@@ -94,14 +90,16 @@ const joinRoom = (socket, room) => {
                         socket.to(Aroom.id).emit("startToPlay")
                         Aroom.members[1].emit("startToPlay")
                     }
-                    }, 5000)
+                    }, 1000)
             }
         }
     })
     if(!roomFound){
         roomObj = createRoom(socket, room);
         roomFound = true;
+        console.log(activeRooms);
     }
+    console.log(roomFound);
     return roomFound;
 }
 
@@ -133,7 +131,7 @@ const exitTheRoom = (socket) => {
 io.on('connection', (socket) => {
     var newConnexion = socket.handshake.query.token;
     socket.username = newConnexion;
-    console.log("${newConnexion} joined");
+    console.log(`${newConnexion} joined`);
 
     //Si pas de salle -> retourne l'id de la salle + add le joueur
     socket.on("getRoomId",()=>{
@@ -144,7 +142,9 @@ io.on('connection', (socket) => {
 
     // Si <2 joueurs dans la salle mais que la salle existe
     socket.on("tryToJoin", (roomId)=>{
-        if(checkRoomExist(roomId)){
+        console.log(checkIfIdExists(roomId));
+        console.log(roomId);
+        if(checkIfIdExists(roomId)){
             if(joinRoom(socket, roomId)){
                 socket.emit("resultJoiningRoom",{status: true, text: "Bienvenue !"})
             }else{
@@ -158,9 +158,8 @@ io.on('connection', (socket) => {
     //Mouvements des pions (à modifier)
     //Lorsqu'un pion est déplacé, son numéro est envoyé au serveur, le serveur envoit un message 
     //au client qui va déplacer ce pion
-    socket.on("pionMove", (numPion, room) => {
-        // console.log(numPion, room);
-        socket.to(room).emit("opponentPionMove", numPion);
+    socket.on("myMove", (side, pawn, room) => {
+        socket.to(room).emit('opponentMove', { side: side, pawn: pawn });
     })
 
     socket.on("exitRoom", ()=>{
@@ -168,7 +167,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on("disconnect",()=>{
-        console.log('${socket.username} Disconnected');
+        console.log(`${socket.username} Disconnected'`);
     })
 
 })
