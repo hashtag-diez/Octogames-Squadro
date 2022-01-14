@@ -106,16 +106,16 @@ const setYellowHover=(x,y,currPower)=>{
     return list
   }
 
-  const setRedHover=(x,y,currPower)=>{
+   const setRedHover=(x,y,currPower)=>{
     const currBoard = [...board]
     let list=[0,0,0,0,0,0]
     if(currPower===0){ return list}
-    let future=x+currPower
+    let future=y+currPower
     if(future>6){ future=6}
     else if(future<0){ future=0}
     let i
     if(currPower>0){
-      for (i =x+1;i<=future ; i++){
+      for (i =y+1;i<=future ; i++){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future++
@@ -125,7 +125,7 @@ const setYellowHover=(x,y,currPower)=>{
       }
     }
     else{
-      for (i =x-1;i>=future ; i--){
+      for (i =y-1;i>=future ; i--){
         if(currBoard[x][i].toLowerCase()==='y'){
           list[i]=2
           future--
@@ -134,6 +134,7 @@ const setYellowHover=(x,y,currPower)=>{
         }
       }
     }
+    console.log("pion ")
     return list
   }
   const handleRedPlay = (isTrusted, x, y, power) => {
