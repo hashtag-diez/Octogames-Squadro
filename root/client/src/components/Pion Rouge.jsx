@@ -69,12 +69,7 @@ const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, hoverlist, turn, pl
     }
   }, [posY])
   if (!startAtTheOtherSide) {
-    return (
-      <>
-        <StyledRed turn={turn} animateSlide={animateSlide} animateRotate={animateRotate} curr={posY} step={distance} onClick={(e) => handleMovement(e)} />
-      </>
-    )
-  } else {
+   
     return (
       <PawnWrapper
             onMouseEnter={() => {
