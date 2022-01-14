@@ -9,7 +9,7 @@ export default function MultiplayerMenu({ player, setPlayer, socket ,room, setRo
     const [roomText, setRoomText] = useState("");
     const [createRoom, setCreateRoom] = useState(false);
     const [joinRoom, setJoinRoom] = useState(false);
-    const [user, setUser] = useState({name: 'p', sprite: 'adventurers'})
+    const [user, setUser] = useState({name: 'p', sprite: 'adventurer'})
     //set le nom d'utilisateur 
     const handleFormUsername = (e) => {
         e.preventDefault();

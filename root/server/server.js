@@ -75,6 +75,7 @@ const joinRoom = (socket, room) => {
                 Aroom.members.push(socket)
                 socket.join(room);
                 roomObj = Aroom;
+                console.log(Aroom.members)
             }
             if(roomObj && Aroom.members.length == 2){
 

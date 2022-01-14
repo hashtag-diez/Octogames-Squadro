@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../style/Plateau.css'
 import PionJaune from './Pion Jaune'
 import PionRouge from './Pion Rouge'
@@ -34,14 +34,16 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
       { id: 5, x: 5, y: 0, powerGo: 3, powerReturn: -1, currentPower : 1, hasArrived : false }
     ]
   )
-
+  
   const [turn, setTurn] = useState('r')
-  if(socket){
-    socket.on('opponentMove', ({ side, pawn }) => {
-      console.log("L'ennemi a reçu un message de "+side+" pour l'indice "+pawn)
-      triggerClick(pawn, side)
-    })
+  useEffect(() => {
+    if(socket){
+      socket.on('opponentMove', ({ side, pawn }) => {
+          console.log("L'ennemi a reçu un message de "+side+" pour l'indice "+pawn)
+          triggerClick(pawn, side)
+      })
   }
+  }, [])
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
@@ -146,6 +148,7 @@ const setYellowHover=(x,y,currPower)=>{
   const handleRedPlay = (isTrusted, x, y, power) => {
     if(isOnline && isTrusted){
       console.log('emission !!!!')
+      console.log(socket.rooms)
       socket.emit("myMove", "red", x, room)
     }
     const currBoard = [...board]
