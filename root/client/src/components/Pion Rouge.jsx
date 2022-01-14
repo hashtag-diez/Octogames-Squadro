@@ -4,11 +4,7 @@ import { ReactComponent as Red } from '../assets/Pion Rouge.svg'
 import {ReactComponent as NormalHover} from "../assets/Hover Normal Rouge.svg";
 import {ReactComponent as HitHover} from "../assets/Hover Hit Rouge.svg";
 
-<<<<<<< HEAD
-const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, isAgainstBot, handleBotPlay }) => {
-=======
 const PionRouge = ({ x, y, powerGo, powerReturn, handlePlay, turn, player, isOnline, host, isAgainstBot, handleBotPlay }) => {
->>>>>>> feat/10-multiplayer-without-mouvement
   const [posY, setPosY] = useState(y)
   const [animateSlide, setAnimateSlide] = useState(false)
   const [animateRotate, setAnimateRotate] = useState(false)
