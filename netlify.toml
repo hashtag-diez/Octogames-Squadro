@@ -3,7 +3,7 @@
 [build]
   base = "root/client/"
   publish = "/"
-  command = "echo 'default context'"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"
