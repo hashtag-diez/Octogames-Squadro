@@ -2,7 +2,7 @@ import OnlineGame from './OnlineGame'
 import MultiplayerMenu from './MultiplayerMenu'
 import React, { useEffect, useState } from 'react'
 import socketIOClient from 'socket.io-client'
-const ENDPOINT = 'https://octogames-squadro.herokuapp.com/'
+const ENDPOINT = 'http://localhost:5000'
 
 function MultiplayerGame() {
   

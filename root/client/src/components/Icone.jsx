@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 const URL = 'https://avatars.dicebear.com/api/'
 
-const Icone = ({ editor, name, theme, setUser, user, isHost }) => {
+const Icone = ({ editor, name, theme, setUser, user, isHost, player }) => {
   const [seed, setSeed] = useState(!editor ? name : 'p')
   const [sprite, setSprite] = useState(!editor ? theme : 'adventurer')
   const [img, setImg] = useState(URL + sprite + '/' + seed + '.svg')
@@ -47,7 +47,7 @@ const Icone = ({ editor, name, theme, setUser, user, isHost }) => {
         <StyledWrapperMin >
           <img src={img} />
         </StyledWrapperMin>
-        <h3>{seed}</h3>
+        <h3>{seed} {(player.name===seed ? '(Moi)' : '')}</h3>
       </StyledDivMin>
     )
   }

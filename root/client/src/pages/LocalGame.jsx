@@ -8,6 +8,7 @@ import Plateau from '../components/Plateau'
 const LocalGame = ({ isAgainstBot }) => {
   const [score, setScore] = useState([0, 0])
   const [key, setKey] = useState(Date.now())
+  const [turn, setTurn] = useState('r')
   const handleReset = e => {
     e.preventDefault()
     setScore([0, 0])
@@ -19,7 +20,7 @@ const LocalGame = ({ isAgainstBot }) => {
         <img src={logo} alt='logo' />
       </StyledHeader>
       <StyledMain>
-        <Plateau key={key} score={score} setScore={setScore} isAgainstBot={isAgainstBot} />
+        <Plateau key={key} score={score} setScore={setScore} isAgainstBot={isAgainstBot} turn={turn} setTurn={setTurn} />
         <aside>
           {
             score[0] === 4 || score[1] === 4
@@ -29,9 +30,9 @@ const LocalGame = ({ isAgainstBot }) => {
                 ont gagné 🎉
                 </h1>
               : <h1 style={{ marginBottom: '30px' }}>
-                <StyledSpan red>Rouge</StyledSpan>&nbsp; : {score[0]}
+                <StyledSpan yellow={false} turn={turn}>Rouge</StyledSpan>&nbsp; : {score[0]}
                 <br />
-                <StyledSpan yellow>Jaune</StyledSpan>&nbsp;&nbsp;&nbsp;: {score[1]}
+                <StyledSpan yellow turn={turn}>Jaune</StyledSpan>&nbsp;&nbsp;&nbsp;: {score[1]}
                 </h1>
           }
           <Rules />

@@ -16,6 +16,7 @@ align-items: flex-end;
 padding-left: 15px;
 `
 export const StyledSpan = styled.span`
+  filter: ${({ turn, yellow }) => ((turn === 'y' && !yellow) || (turn === 'r' && yellow) ? 'grayscale(100%)' : '')};
   color: ${({ yellow }) => (yellow ? '#DAA25D' : '#E02016')};
 `
 export const StyledMain = styled.main`

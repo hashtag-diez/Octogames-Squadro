@@ -5,7 +5,7 @@ import PionRouge from './Pion Rouge'
 import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, host, player, isOnline }) => {
+export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, host, player, isOnline, turn, setTurn }) => {
   const [board, setBoard] = useState(
       [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
         ['r', '+', '+', '+', '+', '+', '—'],
@@ -35,8 +35,6 @@ export const Plateau = ({ score, setScore, isAgainstBot, socket, room, guest, ho
     ]
   )
   
-  const [turn, setTurn] = useState('r')
-
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
     list.forEach(x => {
