@@ -13,4 +13,13 @@ ExpressJS
 les modules react-scripts v17, Socket.io 4.4.0, react-router-dom v6
 
 
-Pour plus d'informations ,vous pouvez vous diriger vers le ReadMe de Octogames-Squadro/root/src/client
+Lancer le projet(via le terminal):
+-> lancer le serveur: 
+    - se placer dans /root/server
+    - lancer un *npm i* pour installer les nodes modules de npm
+    - faire *npm run start* 
+    
+-> lancer un ou des clients:
+   - se placer dans /root/client
+    - lancer un *npm i* pour installer les nodes modules de npm
+    - faire *npm run start* 
