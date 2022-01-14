@@ -297,9 +297,8 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
     if (depth === 0 || node.children.length <= 0){
         let color = (maximizingPlayer ? "yellow" : "red");
         let evaluation = Evaluation(node, node.pion, color);
-        // evaluation = (node.isMaxPlayer? evaluation :  - evaluation);
         node.score = evaluation
-        return evaluation;
+        return;
     }
 
     if (maximizingPlayer){
@@ -328,7 +327,7 @@ function MinMax(node, depth, maximizingPlayer, alpha, beta){
 }
 
 export default function nextMove(listYellow, listRed, board) {
-    const depth = 2
+    const depth = 6
 
     //dans le front appeller nextMove([...yellow], [...red], [...board])
 
