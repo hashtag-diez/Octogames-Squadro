@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 
-export default function WelcomeScreen({ player, setPlayer, socket ,room, setRoom }) {
+export default function MultiplayerMenu({ player, setPlayer, socket ,room, setRoom }) {
     const [name, setName] = useState(player.name);
     const [error, setError] = useState();
     const [roomText, setRoomText] = useState("");

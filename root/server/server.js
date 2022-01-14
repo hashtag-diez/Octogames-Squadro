@@ -3,7 +3,7 @@ const express = require('express');
 const socket = require('socket.io');
 const path = require('path');
 const http = require('http');
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3000
 const app = express();
 const server = http.createServer(app);
 const io = socket(server, {cors: {origin: "*", methods: ["GET", "POST"]}});
@@ -101,7 +101,6 @@ const joinRoom = (socket, room) => {
     })
     if(!roomFound){
         roomObj = createRoom(socket, room);
-        roomFound = true;
     }
     return roomObj;
 }
@@ -146,7 +145,6 @@ io.on('connection', (socket) => {
     // Si <2 joueurs dans la salle mais que la salle existe
     socket.on("tryToJoin", (roomId)=>{
         if(checkIfIdExists(roomId)){
-            console.log(joinRoom(socket, roomId))
             if(joinRoom(socket, roomId)){
                 socket.emit("resultJoiningRoom",{status: true, text: "Bienvenue !"})
             }else{
