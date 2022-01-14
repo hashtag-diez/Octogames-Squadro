@@ -5,16 +5,16 @@ import PionRouge from './Pion Rouge'
 import nextMove from '../js/bot/minMax.js'
 import { ReactComponent as Board } from '../assets/Plateau.svg'
 
-export const Plateau = () => {
+export const Plateau = ({ score, setScore, isAgainstBot }) => {
   const [board, setBoard] = useState(
-    [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['r', '+', '+', '+', '+', '+', '—'],
-      ['x', '|', '|', '|', '|', '|', 'x']
-    ]
+      [['x', 'y', 'y', 'y', 'y', 'y', 'x'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['r', '+', '+', '+', '+', '+', '—'],
+        ['x', '|', '|', '|', '|', '|', 'x']
+      ]
   )
   const [yellows, setYellows] = useState(
     [
@@ -35,8 +35,6 @@ export const Plateau = () => {
     ]
   )
 
-  const [againstBot, setAgainstBot] = useState(true)
-  const [score, setScore] = useState([0, 0])
   const [turn, setTurn] = useState('r')
   const replaceRedPawn = (list) => {
     const newReds = [...reds]
@@ -77,6 +75,68 @@ export const Plateau = () => {
       setReds(newPawns)
     }
   }
+
+const setYellowHover=(x,y,currPower)=>{
+  const currBoard = [...board]
+  let list=[0,0,0,0,0,0]
+  if(currPower===0){ return list}
+  let future=x+currPower
+  if(future>6){ future=6}
+  else if(future<0){ future=0}
+  let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[i][y].toLowerCase()==='r'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
+  }
+
+  const setRedHover=(x,y,currPower)=>{
+    const currBoard = [...board]
+    let list=[0,0,0,0,0,0]
+    if(currPower===0){ return list}
+    let future=x+currPower
+    if(future>6){ future=6}
+    else if(future<0){ future=0}
+    let i
+    if(currPower>0){
+      for (i =x+1;i<=future ; i++){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future++
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    else{
+      for (i =x-1;i>=future ; i--){
+        if(currBoard[x][i].toLowerCase()==='y'){
+          list[i]=2
+          future--
+        }else{
+          list[i]=1
+        }
+      }
+    }
+    return list
+  }
   const handleRedPlay = (x, y, power) => {
     const currBoard = [...board]
     // Liste contenant les pions éliminés lors du tour
@@ -106,6 +166,10 @@ export const Plateau = () => {
     replaceYellowPawn(deadPawn)
     if (res === 6) currBoard[x][res] = 'R'
     else currBoard[x][res] = state
+    replaceYellowPawn(deadPawn)
+    if (res === 6) currBoard[x][res] = 'R'
+    else currBoard[x][res] = state
+    // Si le pion a quitté une bordure de sa ligne/colonne
     if (y === 0 || y === 6) currBoard[x][y] = '—'
     else currBoard[x][y] = '+'
     setBoard(currBoard)
@@ -134,6 +198,7 @@ export const Plateau = () => {
     pawn.dispatchEvent(event)
 }
   const handleYellowPlay = (x, y, power) => {
+
     const currBoard = [...board]
     const deadPawn = []
     // Etat actuel du pion dans la matrice, en aller ou en retour
@@ -151,6 +216,7 @@ export const Plateau = () => {
       // Si un pion Rouge est rencontré, retour à la case départ et incrémentation de la distance
       if (i > 0 && i < 6 && currBoard[i][y].toLowerCase() === 'r') {
         distance = (power > 0 ? distance + 1 : distance - 1)
+        console.log('On va regarder la case [',i,',',y,']')
         deadPawn.push(i)
         currBoard[i][(currBoard[i][y] === 'r' ? 0 : 6)] = currBoard[i][y]
         currBoard[i][y] = '+'
@@ -162,6 +228,7 @@ export const Plateau = () => {
     else currBoard[res][y] = state
     if (x === 0 || x === 6) currBoard[x][y] = '|'
     else currBoard[x][y] = '+'
+    // Si un aller-retour complet réalisé, incrémentation du score
     setBoard(currBoard)
     setTurn('r')
     updateYellows(res, y, power)
@@ -181,14 +248,6 @@ export const Plateau = () => {
 
   return (
     <>
-      <h1>
-        Rouge : {score[0]}
-        &emsp;
-        Jaune : {score[1]}
-      </h1>
-      {
-        (turn === 'r' ? <h2 style={{ color: '#E02016' }}> Tour des Rouges</h2> : <h2 style={{ color: '#DAA25D' }}> Tour des Jaunes</h2>)
-      }
       <div className='board-wrapper'>
         <Board />
         <div className='red-row'>
@@ -202,7 +261,7 @@ export const Plateau = () => {
                 powerReturn={red.powerReturn}
                 handlePlay={handleRedPlay}
                 handleBotPlay={handleBotPlay}
-                isAgainstBot={againstBot}
+                isAgainstBot={isAgainstBot}
                 turn={turn}
               />
             ))

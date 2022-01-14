@@ -1,6 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 .App {
-  display: grid;
-  place-items: center;
+  width: inherit;
+  height: inherit;
+  background-color: #F5F6FC;
+  font-family: 'Manrope', sans-serif;
+}
+.App h1{
   text-align: center;
   width: inherit;
   height: inherit;

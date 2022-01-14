@@ -287,6 +287,7 @@ function createTree(board, depth, listYellow, listRed){
             root.push(node);
         }
     })
+    
     return root;
 }
 

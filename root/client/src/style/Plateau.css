@@ -10,12 +10,11 @@
   position: absolute;
   top: 0;
   left: 0;
-  margin: 0;
   z-index: -1;
 }
 .yellow-row{
-  margin-top: 5px;
-  margin-left: 32px;
+  margin-top: 0.25em;
+  margin-left:2.25em;
   display: flex;
   flex-direction: row;
   gap: 63px;
@@ -24,11 +23,16 @@
 .red-row{
   margin-top: 130px;
   margin-bottom: 75px;
-  margin-left: 5px;
   display: flex;
   flex-direction: column;
   gap: 64px;
   width: 94px;
-  height: calc(100%-188px);
+  height: calc(100%);
+}
+h1{
+  text-align: center;
 }
 
+h2{
+  text-align: center;
+}
